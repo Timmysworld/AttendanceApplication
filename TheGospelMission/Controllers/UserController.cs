@@ -14,9 +14,6 @@ public class UserController : ControllerBase
     private readonly UserServices _userService;
     private readonly UserManager<User> _userManager;
 
-    private readonly NotificationService _notificationService;
-
-
     public UserController(GospelMissionDbContext context,UserServices userService, UserManager<User> userManager, NotificationService notificationService )
     {
         _context = context;
@@ -25,22 +22,14 @@ public class UserController : ControllerBase
 
         _userManager = userManager;
 
-        _notificationService = notificationService;
     }
 
-    [HttpPost]
-    [Route("Forgot-Password")]
-    public async Task<IActionResult> ForgotPassword([FromBody] PasswordResetRequest resetRequest)
+    [HttpGet]
+    [Route("Dashboard")]
+    public async Task<IActionResult> Dashboard()
     {
-        var user = await _userManager.FindByEmailAsync(resetRequest.Email);
-        if(user == null)
-        {   
-            return NotFound();
-        }
-        _notificationService.AddNotification($"User {resetRequest.Email} needs a password reset", "OverSeer");
-        return Ok("Password request submitted successfully, Admin will reset in 24hours. ");
+        return Ok();
     }
 }
-//TODO: NEED ENDPOINTS FOR EDITING A USER, AS WELL AS (DEACTIVATING A USER===ADMIN PRIVALAGE)
-//TODO: NEED TO ADD LAST LOGGED IN TO USER MODEL 
+//TODO: NEED ENDPOINTS FOR EDITING A USER
 //TODO: MAKE SURE USERS ARE ALSO CLASSIFIED AS MEMBERS FOR ATTENDANCE PURPOSES

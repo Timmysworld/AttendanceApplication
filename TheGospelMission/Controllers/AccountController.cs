@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using TheGospelMission.Models;
+using TheGospelMission.Services;
 
 namespace TheGospelMission.Controllers;
 
@@ -14,12 +15,14 @@ public class AccountController(
     UserManager<User> userManager,
     RoleManager<IdentityRole> roleManager,
     IConfiguration configuration,
+    NotificationService notificationService,
     ILogger<AccountController> logger) : ControllerBase
 {
     private readonly UserManager<User> _userManager = userManager;
     private readonly RoleManager<IdentityRole> _roleManager = roleManager;
     private readonly IConfiguration _configuration = configuration;
     private readonly ILogger<AccountController> _logger = logger;
+    private readonly NotificationService _notificationService = notificationService;
 
     [HttpPost]
     [Route("Register")]
@@ -156,6 +159,19 @@ public class AccountController(
             return StatusCode(StatusCodes.Status500InternalServerError, "An unexpected error occurred.");
         }
         return BadRequest();
+    }
+
+    [HttpPost]
+    [Route("Forgot-Password")]
+    public async Task<IActionResult> ForgotPassword([FromBody] PasswordResetRequest resetRequest)
+    {
+        var user = await _userManager.FindByEmailAsync(resetRequest.Email);
+        if(user == null)
+        {   
+            return NotFound();
+        }
+        _notificationService.AddNotification($"User {resetRequest.Email} needs a password reset", "OverSeer");
+        return Ok("Password request submitted successfully, Admin will reset in 24hours. ");
     }
 
 

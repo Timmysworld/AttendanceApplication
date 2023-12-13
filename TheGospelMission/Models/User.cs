@@ -22,8 +22,11 @@ public class User : IdentityUser
     [Column(TypeName = "boolean")]
     public bool? IsActive {get; set;} = true; 
 
-    //[Column(TypeName = "boolean)]
-    //public bool? IsMember{get; set;} = true;
+    [Column(TypeName = "datetime")]
+    public DateTime? LastLogIn {get;set;}
+
+    [Column(TypeName = "boolean")]
+    public bool? IsMember{get; set;} = true;
 
     public int? GroupId { get; set; } // Foreign Key to Group
     public bool? IsGroupLeader {get; set;}
