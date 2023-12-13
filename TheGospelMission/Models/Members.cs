@@ -25,7 +25,7 @@ namespace TheGospelMission.Models
         [Column(TypeName = "datetime")]
         public DateTime? UpdatedAt { get; set; }
 
-        [Column(TypeName = "boolean")]
+        [Column(TypeName = "tinyint(1)")]
         public bool? IsActive {get; set;} = true; 
 
 

@@ -1,3 +1,4 @@
+using System.Text.RegularExpressions;
 using Microsoft.EntityFrameworkCore;
 using TheGospelMission.Data;
 using Group = TheGospelMission.Models.Group;
@@ -25,5 +26,22 @@ public class GroupServices(GospelMissionDbContext context, ILogger<GroupServices
         {
             return await _context.Groups.FindAsync(groupId);
         }
+
+        public async Task<Group> GetGroupWithMembersAsync(int groupId)
+        {
+            var group = await FindAsync(groupId);
+
+            if (group != null)
+            {
+                // Explicitly load the Members collection using eager loading
+                await _context.Entry(group)
+                    .Collection(g => g.Members)
+                    .LoadAsync();
+            }
+
+            return group;
+        }
+
+
 }
 

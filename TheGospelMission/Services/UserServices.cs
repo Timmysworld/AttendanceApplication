@@ -1,8 +1,11 @@
+using System.Security.Claims;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using TheGospelMission.Data;
 using TheGospelMission.Models;
+using TheGospelMission.ViewModels;
 
 namespace TheGospelMission.Services;
 public class UserServices
@@ -30,6 +33,62 @@ public class UserServices
         {
             return await _context.Users.ToListAsync();
         }
+
+        public async Task<UserProfileModel> GetUserAsync(ClaimsPrincipal userPrincipal)
+        {
+            var userId = _userManager.GetUserId(userPrincipal);
+            var user = await _userManager.FindByIdAsync(userId);
+            if(user == null)
+            {
+                return null;
+            }
+            var profile = new UserProfileModel
+            {
+                Id = user.Id,
+                UserName = user.UserName,
+                Email = user.Email,
+                FirstName = user.FirstName,
+                LastName = user.LastName
+
+            };
+
+            return profile;
+        }
+
+        public async Task<IActionResult> UpdateUserProfileAsync(UserProfileModel profile)
+        {
+            try
+            {
+
+                var currentUserProfile = await _context.Users
+                    .FirstOrDefaultAsync(u => u.Id == profile.Id);
+
+                _logger.LogInformation($"Updating user profile with ID: {profile.Id}");
+                if (currentUserProfile == null)
+                {
+                    return new NotFoundObjectResult("User profile not found");
+                }
+
+                currentUserProfile.UserName = profile.UserName;
+                currentUserProfile.Email = profile.Email;
+                currentUserProfile.FirstName = profile.FirstName;
+                currentUserProfile.LastName = profile.LastName;
+
+                await _context.SaveChangesAsync();
+
+                return new OkObjectResult("User Updated Successfully");
+            }
+            catch (Exception ex)
+            {
+                // Log the exception if needed
+                return new ObjectResult("An error occurred while processing your request.")
+                {
+                    StatusCode = 500
+                };
+            }
+        }
+
+
 
     //ASSIGN USERS TO GROUP 
         public async Task AssignGroup(string userId, int groupId, bool IsGroupLeader, bool IsUnitLeader)
@@ -90,6 +149,5 @@ public class UserServices
             await _userManager.AddToRoleAsync(user, roleName);
         }
 
-        //TODO: I NEED AN UPDATE/EDIT AND DELETE/DEACTIVATE USER INFORMATION
 
 }

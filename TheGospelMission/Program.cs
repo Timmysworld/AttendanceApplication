@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using System.Text;
 using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -63,6 +64,7 @@ builder.Services.AddAuthentication(options =>
         ValidIssuer = builder.Configuration.GetSection("JwtConfig:Issuer").Value,
         ValidateAudience = true,
         ValidAudience = builder.Configuration.GetSection("JwtConfig:Audience").Value,
+        RoleClaimType = ClaimTypes.Role,
     };
     jwt.Events = new JwtBearerEvents
     {

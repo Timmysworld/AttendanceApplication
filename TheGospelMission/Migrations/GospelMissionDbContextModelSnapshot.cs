@@ -248,37 +248,37 @@ namespace TheGospelMission.Migrations
                         new
                         {
                             GroupId = 1,
-                            CreatedAt = new DateTime(2023, 12, 9, 0, 29, 26, 222, DateTimeKind.Local).AddTicks(7390),
+                            CreatedAt = new DateTime(2023, 12, 13, 9, 14, 19, 33, DateTimeKind.Local).AddTicks(4510),
                             GroupName = "Adult Brothers"
                         },
                         new
                         {
                             GroupId = 2,
-                            CreatedAt = new DateTime(2023, 12, 9, 0, 29, 26, 222, DateTimeKind.Local).AddTicks(7440),
+                            CreatedAt = new DateTime(2023, 12, 13, 9, 14, 19, 33, DateTimeKind.Local).AddTicks(4560),
                             GroupName = "Adult Sisters"
                         },
                         new
                         {
                             GroupId = 3,
-                            CreatedAt = new DateTime(2023, 12, 9, 0, 29, 26, 222, DateTimeKind.Local).AddTicks(7450),
+                            CreatedAt = new DateTime(2023, 12, 13, 9, 14, 19, 33, DateTimeKind.Local).AddTicks(4570),
                             GroupName = "Adult Spanish Brothers"
                         },
                         new
                         {
                             GroupId = 4,
-                            CreatedAt = new DateTime(2023, 12, 9, 0, 29, 26, 222, DateTimeKind.Local).AddTicks(7450),
+                            CreatedAt = new DateTime(2023, 12, 13, 9, 14, 19, 33, DateTimeKind.Local).AddTicks(4570),
                             GroupName = "Adult Spanish Sisters"
                         },
                         new
                         {
                             GroupId = 5,
-                            CreatedAt = new DateTime(2023, 12, 9, 0, 29, 26, 222, DateTimeKind.Local).AddTicks(7450),
+                            CreatedAt = new DateTime(2023, 12, 13, 9, 14, 19, 33, DateTimeKind.Local).AddTicks(4570),
                             GroupName = "Student Brothers"
                         },
                         new
                         {
                             GroupId = 6,
-                            CreatedAt = new DateTime(2023, 12, 9, 0, 29, 26, 222, DateTimeKind.Local).AddTicks(7460),
+                            CreatedAt = new DateTime(2023, 12, 13, 9, 14, 19, 33, DateTimeKind.Local).AddTicks(4570),
                             GroupName = "Student Sisters"
                         });
                 });
@@ -305,7 +305,7 @@ namespace TheGospelMission.Migrations
                         .HasColumnType("int");
 
                     b.Property<bool?>("IsActive")
-                        .HasColumnType("boolean");
+                        .HasColumnType("tinyint(1)");
 
                     b.Property<string>("LastName")
                         .HasColumnType("nvarchar(255)");
@@ -371,11 +371,20 @@ namespace TheGospelMission.Migrations
                     b.Property<int?>("GroupId")
                         .HasColumnType("int");
 
+                    b.Property<bool?>("IsActive")
+                        .HasColumnType("tinyint(1)");
+
                     b.Property<bool?>("IsGroupLeader")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<bool?>("IsMember")
                         .HasColumnType("tinyint(1)");
 
                     b.Property<bool?>("IsUnitLeader")
                         .HasColumnType("tinyint(1)");
+
+                    b.Property<DateTime?>("LastLoggedOn")
+                        .HasColumnType("datetime");
 
                     b.Property<string>("LastName")
                         .HasColumnType("nvarchar(255)");
@@ -500,7 +509,7 @@ namespace TheGospelMission.Migrations
             modelBuilder.Entity("TheGospelMission.Models.Member", b =>
                 {
                     b.HasOne("TheGospelMission.Models.Church", "Church")
-                        .WithMany()
+                        .WithMany("Members")
                         .HasForeignKey("ChurchId");
 
                     b.HasOne("TheGospelMission.Models.Group", "Group")
@@ -551,6 +560,8 @@ namespace TheGospelMission.Migrations
 
             modelBuilder.Entity("TheGospelMission.Models.Church", b =>
                 {
+                    b.Navigation("Members");
+
                     b.Navigation("Users");
                 });
 
