@@ -26,6 +26,7 @@ builder.Services.AddScoped<MemberServices>();
 builder.Services.AddScoped<UserServices>();
 builder.Services.AddScoped<NotificationService>();
 builder.Services.AddScoped<ChurchServices>();
+builder.Services.AddScoped<AttendanceServices>();
 
 
 
