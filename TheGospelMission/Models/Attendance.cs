@@ -11,11 +11,11 @@ namespace TheGospelMission.Models
         [Column(TypeName = "nvarchar(25)")]
         public string? Status { get; set; }
         
-        [Column(TypeName = "datetime")]
-        public DateTime? AttendanceDate { get; set; }
+        [Column(TypeName = "date")]
+        public DateOnly AttendanceDate { get; set; }
 
-        [Column(TypeName = "datetime")]
-        public DateTime? AttendanceTime { get; set; }
+        [Column(TypeName = "nvarchar(25)")]
+        public string AttendanceTime { get; set; }
 
         [Column(TypeName = "datetime")]
         public DateTime? CreatedAt { get; set; } = DateTime.Now;
@@ -25,5 +25,6 @@ namespace TheGospelMission.Models
 
         public virtual ICollection<MemberAttendance>? MemberAttendances { get; set; }
         public Attendance() { }
+
     }
 }

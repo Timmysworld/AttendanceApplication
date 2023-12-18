@@ -41,7 +41,7 @@ public class AttendanceController : ControllerBase
             var attendanceViewModel = new AttendanceViewModel
             {
                 GroupMembers = groupMembers.Members.ToList(),
-                Date = DateTime.Today
+                Date = DateOnly.FromDateTime(DateTime.Now)
             };
             
             return Ok(attendanceViewModel);
@@ -58,7 +58,7 @@ public class AttendanceController : ControllerBase
     {
         try
         {
-            var result = await _attendanceService.CheckAttendanceAsync(attendance.GroupId, attendance.Date, attendance.GroupMembers, attendance.AttendanceStatus);
+            var result = await _attendanceService.CheckAttendanceAsync(attendance.GroupId, attendance.Date, attendance.Time, attendance.GroupMembers, attendance.AttendanceStatus);
 
             if (result)
             {
@@ -72,11 +72,10 @@ public class AttendanceController : ControllerBase
         catch (Exception ex)
         {
             
-            return StatusCode(500, "Internal Server Error");
+            return StatusCode(500,ex.Message);
         }
     }
 
 }
 
-//TODO: NEED TO FIX POST ROUTE SO THAT I CAN INSERT MULTIPLE ATTENDANCE RECORDS FOR A MEMBER.
 //TODO: NEED TO ALSO CHECK AND MAKE SURE I CAN LABEL THE ATTENDANCE RECORD BASED ON SERVICE[ MORNING SERVICE, AFTERNOON SERVICE, EVENING SERVICE, AND THIRD DAY SERVICE]

@@ -14,7 +14,7 @@ public class AttendanceServices
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
 
-    public async Task<bool> CheckAttendanceAsync(int groupId, DateTime selectedDate, List<Member> groupMembers, string attendanceStatus)
+    public async Task<bool> CheckAttendanceAsync(int groupId, DateOnly selectedDate, string time, List<Member> groupMembers, string attendanceStatus)
     {
         try
         {
@@ -28,7 +28,7 @@ public class AttendanceServices
             {
                 // Check if there is an existing attendance record for the selected date
                 var attendanceRecord = await _context.Attendances
-                    .FirstOrDefaultAsync(a => a.AttendanceDate == selectedDate);
+                    .FirstOrDefaultAsync(a => a.AttendanceDate == selectedDate && a.AttendanceTime == time);
                 
                 if(attendanceRecord == null)
                 {
@@ -36,7 +36,7 @@ public class AttendanceServices
                     {
                         AttendanceDate = selectedDate,
                         Status = attendanceStatus,
-                        AttendanceTime = DateTime.Now,
+                        AttendanceTime = GetTimeLabel(DateTime.Now),
                         CreatedAt = DateTime.Now,
                         UpdatedAt = null
                     };
@@ -69,5 +69,32 @@ public class AttendanceServices
         {
             throw;
         }
+    }
+
+    //HELPER METHOD TO GET THE TIME AS LABELS
+//TODO: NEED TO FIX LOGIC SO THAT IF THE DAY IS TUESDAY IT RESULTS IN SAYING THIRD DAY SERVICE FOR ATTENDANCE TIME
+    private static string GetTimeLabel(DateTime time)
+    {
+        // Log the day of the week for debugging
+    Console.WriteLine($"Day of the week: {time.DayOfWeek}");
+
+        if (time.DayOfWeek == DayOfWeek.Tuesday)
+        {
+            return "Third Day Service";
+        }
+        int hour = time.Hour;
+
+        switch (hour)
+        {
+            case int h when (h >= 0 && h < 12):
+                return "Morning Service";
+            case int h when (h >= 12 && h < 17):
+                return "Afternoon Service";
+            case int h when (h >= 17 && h < 21): 
+                return "Evening Service";
+            default:
+                return null;
+        }
+
     }
 }

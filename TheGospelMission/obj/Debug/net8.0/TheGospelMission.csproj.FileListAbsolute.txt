@@ -206,6 +206,7 @@
 /Users/timmysworld/Desktop/DeveloperProjects/AttendanceApplication/TheGospelMission/obj/Debug/net8.0/TheGospelMission.csproj.CoreCompileInputs.cache
 /Users/timmysworld/Desktop/DeveloperProjects/AttendanceApplication/TheGospelMission/obj/Debug/net8.0/TheGospelMission.MvcApplicationPartsAssemblyInfo.cs
 /Users/timmysworld/Desktop/DeveloperProjects/AttendanceApplication/TheGospelMission/obj/Debug/net8.0/TheGospelMission.MvcApplicationPartsAssemblyInfo.cache
+/Users/timmysworld/Desktop/DeveloperProjects/AttendanceApplication/TheGospelMission/obj/Debug/net8.0/TheGospelMission.sourcelink.json
 /Users/timmysworld/Desktop/DeveloperProjects/AttendanceApplication/TheGospelMission/obj/Debug/net8.0/staticwebassets.build.json
 /Users/timmysworld/Desktop/DeveloperProjects/AttendanceApplication/TheGospelMission/obj/Debug/net8.0/staticwebassets.development.json
 /Users/timmysworld/Desktop/DeveloperProjects/AttendanceApplication/TheGospelMission/obj/Debug/net8.0/staticwebassets/msbuild.TheGospelMission.Microsoft.AspNetCore.StaticWebAssets.props
@@ -220,4 +221,3 @@
 /Users/timmysworld/Desktop/DeveloperProjects/AttendanceApplication/TheGospelMission/obj/Debug/net8.0/TheGospelMission.pdb
 /Users/timmysworld/Desktop/DeveloperProjects/AttendanceApplication/TheGospelMission/obj/Debug/net8.0/TheGospelMission.genruntimeconfig.cache
 /Users/timmysworld/Desktop/DeveloperProjects/AttendanceApplication/TheGospelMission/obj/Debug/net8.0/ref/TheGospelMission.dll
-/Users/timmysworld/Desktop/DeveloperProjects/AttendanceApplication/TheGospelMission/obj/Debug/net8.0/TheGospelMission.sourcelink.json
