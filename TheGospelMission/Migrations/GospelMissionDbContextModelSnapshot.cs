@@ -153,11 +153,12 @@ namespace TheGospelMission.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    b.Property<DateTime?>("AttendanceDate")
-                        .HasColumnType("datetime");
+                    b.Property<DateOnly>("AttendanceDate")
+                        .HasColumnType("date");
 
-                    b.Property<DateTime?>("AttendanceTime")
-                        .HasColumnType("datetime");
+                    b.Property<string>("AttendanceTime")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(25)");
 
                     b.Property<DateTime?>("CreatedAt")
                         .HasColumnType("datetime");
@@ -248,37 +249,37 @@ namespace TheGospelMission.Migrations
                         new
                         {
                             GroupId = 1,
-                            CreatedAt = new DateTime(2023, 12, 13, 9, 14, 19, 33, DateTimeKind.Local).AddTicks(4510),
+                            CreatedAt = new DateTime(2023, 12, 18, 0, 44, 15, 300, DateTimeKind.Local).AddTicks(6960),
                             GroupName = "Adult Brothers"
                         },
                         new
                         {
                             GroupId = 2,
-                            CreatedAt = new DateTime(2023, 12, 13, 9, 14, 19, 33, DateTimeKind.Local).AddTicks(4560),
+                            CreatedAt = new DateTime(2023, 12, 18, 0, 44, 15, 300, DateTimeKind.Local).AddTicks(7010),
                             GroupName = "Adult Sisters"
                         },
                         new
                         {
                             GroupId = 3,
-                            CreatedAt = new DateTime(2023, 12, 13, 9, 14, 19, 33, DateTimeKind.Local).AddTicks(4570),
+                            CreatedAt = new DateTime(2023, 12, 18, 0, 44, 15, 300, DateTimeKind.Local).AddTicks(7020),
                             GroupName = "Adult Spanish Brothers"
                         },
                         new
                         {
                             GroupId = 4,
-                            CreatedAt = new DateTime(2023, 12, 13, 9, 14, 19, 33, DateTimeKind.Local).AddTicks(4570),
+                            CreatedAt = new DateTime(2023, 12, 18, 0, 44, 15, 300, DateTimeKind.Local).AddTicks(7020),
                             GroupName = "Adult Spanish Sisters"
                         },
                         new
                         {
                             GroupId = 5,
-                            CreatedAt = new DateTime(2023, 12, 13, 9, 14, 19, 33, DateTimeKind.Local).AddTicks(4570),
+                            CreatedAt = new DateTime(2023, 12, 18, 0, 44, 15, 300, DateTimeKind.Local).AddTicks(7020),
                             GroupName = "Student Brothers"
                         },
                         new
                         {
                             GroupId = 6,
-                            CreatedAt = new DateTime(2023, 12, 13, 9, 14, 19, 33, DateTimeKind.Local).AddTicks(4570),
+                            CreatedAt = new DateTime(2023, 12, 18, 0, 44, 15, 300, DateTimeKind.Local).AddTicks(7020),
                             GroupName = "Student Sisters"
                         });
                 });
@@ -324,16 +325,19 @@ namespace TheGospelMission.Migrations
 
             modelBuilder.Entity("TheGospelMission.Models.MemberAttendance", b =>
                 {
+                    b.Property<int>("MemberAttendanceId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
                     b.Property<int>("AttendanceId")
                         .HasColumnType("int");
 
                     b.Property<int>("MemberId")
                         .HasColumnType("int");
 
-                    b.Property<int>("MemberAttendanceId")
-                        .HasColumnType("int");
+                    b.HasKey("MemberAttendanceId");
 
-                    b.HasKey("AttendanceId", "MemberId");
+                    b.HasIndex("AttendanceId");
 
                     b.HasIndex("MemberId");
 

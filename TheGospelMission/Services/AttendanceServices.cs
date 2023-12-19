@@ -14,11 +14,11 @@ public class AttendanceServices
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
 
-    public async Task<bool> CheckAttendanceAsync(int groupId, DateOnly selectedDate, string time, List<Member> groupMembers, string attendanceStatus)
+    public async Task<bool> CheckAttendanceAsync(int groupId,DateOnly selectedDate, string time, List<Member> groupMembers, string attendanceStatus)
     {
         try
         {
-            if (groupMembers == null || !groupMembers.Any())
+            if (groupMembers == null || groupMembers.Count == 0)
             {
                 // Handle the case where groupMembers is null or empty
                 return false;
@@ -70,6 +70,28 @@ public class AttendanceServices
             throw;
         }
     }
+
+    public async Task<Attendance> FindByIdAsync(int? attendanceId)
+    {
+        
+        return await _context.MemberAttendances
+            .Where(ma => ma.AttendanceId == attendanceId)
+            .Select(ma => ma.Attendance)
+            .FirstOrDefaultAsync();
+    }
+
+    public async Task UpdateAttendance(Attendance attendance)
+    {
+        _context.Attendances.Update(attendance);
+        await _context.SaveChangesAsync();
+    }
+
+    public async Task SaveChangesAsync()
+    {
+        // Save changes to the database
+        await _context.SaveChangesAsync();
+    }
+
 
     //HELPER METHOD TO GET THE TIME AS LABELS
 //TODO: NEED TO FIX LOGIC SO THAT IF THE DAY IS TUESDAY IT RESULTS IN SAYING THIRD DAY SERVICE FOR ATTENDANCE TIME
