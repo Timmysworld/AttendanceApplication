@@ -28,30 +28,6 @@ public class GospelMissionDbContext : IdentityDbContext<User>
         // For example, you can rename the ASP.NET Identity table names and more.
         // Add your customizations after calling base.OnModelCreating(builder);
 
-        Builder.Entity<Attendance>()
-            .HasMany(a => a.MemberAttendances)
-            .WithOne(am => am.Attendance)
-            .HasForeignKey(am => am.AttendanceId);
-
-        Builder.Entity<Member>()
-            .HasMany(m => m.MemberAttendances)
-            .WithOne(am => am.Member)
-            .HasForeignKey(am => am.MemberId);
-
-        // Optionally, if you want to set up a composite primary key for AttendanceMember
-        Builder.Entity<MemberAttendance>()
-            .HasKey(am => new { am.AttendanceId, am.MemberId });
-
-        // Builder.Entity<User>()
-        //     .HasOne(u => u.Group)
-        //     .WithMany(g => g.Users)
-        //     .HasForeignKey(u => u.GroupId)
-        //     .OnDelete(DeleteBehavior.Restrict); // Or specify the desired delete behavior
-
-        // Builder.Entity<Group>()
-        //     .Ignore(g => g.Users); // Ignore the conflicting relationship
-
-
         Builder.Entity<Group>()
             .HasOne(g => g.GroupLeader)
             .WithOne(u => u.Group)
@@ -82,9 +58,4 @@ public class GospelMissionDbContext : IdentityDbContext<User>
             );
 
     }
-
-    // public DbSet<TheGospelMission.Models.RoleManager>? RoleManager { get; set; }
-
-
-
 }
