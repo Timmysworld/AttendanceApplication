@@ -102,6 +102,15 @@ builder.Services.Configure<IdentityOptions>(options =>
 
 });
 
+builder.Services.AddCors(options =>
+    {
+        options.AddDefaultPolicy(builder =>
+        {
+            builder.AllowAnyOrigin()
+                   .AllowAnyMethod()
+                   .AllowAnyHeader();
+        });
+    });
 
 var app = builder.Build();
 
@@ -132,23 +141,24 @@ app.Use(async (context, next) =>
     }
 });
 
-
+app.UseCors();
 
 // Authentication and Authorization
 app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 app.UseEndpoints(endpoints => { _ = endpoints.MapControllers(); }); // Empty UseEndpoints
-
+app.UseDefaultFiles(); // Serve index.html
+app.UseStaticFiles(); // Serve other static files
 // Map Controllers
 app.MapControllers();
 
-// Default Route
-app.MapGet("/", () =>
-{
-    // Return your landing page content or redirect to a dedicated landing page controller action
-    return "Hello World!";
-});
+// // Default Route
+// app.MapGet("/", () =>
+// {
+//     // Return your landing page content or redirect to a dedicated landing page controller action
+//     return "Hello World!";
+// });
 
 using (var scope = app.Services.CreateScope())
 {
