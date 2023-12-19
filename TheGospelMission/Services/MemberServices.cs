@@ -34,9 +34,21 @@ namespace TheGospelMission.Services
             await _context.SaveChangesAsync();
         }
 
-        public async  Task<Member> FindByIdAsync(int memberId)
+        //FIND MEMBER
+        public async  Task<Member> FindByIdAsync(int? memberId)
         {
             return await _context.Members.FindAsync(memberId);
+        }
+
+        // GET MEMBERS ATTENDANCE HISTORY
+        public async Task<List<MemberAttendance>> AttendanceHistory(int memberId)
+        {
+            var result = await _context.MemberAttendances
+                    .Where(ma => ma.MemberId == memberId)
+                    .Include(ma => ma.Attendance)
+                    .ToListAsync();
+
+            return result;
         }
     }
 }

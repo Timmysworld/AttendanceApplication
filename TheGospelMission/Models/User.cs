@@ -19,13 +19,13 @@ public class User : IdentityUser
     [Column(TypeName = "nvarchar(255)")]
     public string? Gender { get; set; }
 
-    [Column(TypeName = "boolean")]
+    [Column(TypeName = "tinyint(1)")]
     public bool? IsActive {get; set;} = true; 
 
     [Column(TypeName = "datetime")]
-    public DateTime? LastLogIn {get;set;}
+    public DateTime? LastLoggedOn {get;set;}
 
-    [Column(TypeName = "boolean")]
+    [Column(TypeName = "tinyint(1)")]
     public bool? IsMember{get; set;} = true;
 
     public int? GroupId { get; set; } // Foreign Key to Group

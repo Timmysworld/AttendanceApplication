@@ -109,10 +109,10 @@ public class AccountController(
             if(ModelState.IsValid)
             {
                 //check if user exist
-                var exiting_user = await _userManager.FindByNameAsync(login.UserName);
+                var existing_user = await _userManager.FindByNameAsync(login.UserName);
 
                 // User not found, return a BadRequest response with an error message
-                if(exiting_user == null)
+                if(existing_user == null)
                     return BadRequest(new AuthResult()
                         {
                             Status = "Failed",
@@ -125,7 +125,7 @@ public class AccountController(
                         });
                 
                 // Check if the provided password is correct
-                var isCorrect = await _userManager.CheckPasswordAsync(exiting_user, login.Password);
+                var isCorrect = await _userManager.CheckPasswordAsync(existing_user, login.Password);
 
                 if(!isCorrect)
                     // Incorrect password, return a BadRequest response with an error message
@@ -139,8 +139,12 @@ public class AccountController(
                             }
                     });
 
-                // Password is correct, generate a JWT token
-                var jwtToken = GenerateJwtToken(exiting_user);
+                
+                // Password is correct, update LastLoggedIn and generate a JWT token
+                existing_user.LastLoggedOn = DateTime.UtcNow;
+                await _userManager.UpdateAsync(existing_user);
+                
+                var jwtToken = GenerateJwtToken(existing_user);
 
                 // Return a successful response with the JWT token
                 return Ok(new AuthResult()
@@ -179,34 +183,34 @@ public class AccountController(
     {
         try
         {
+            var claims = new List<Claim>
+            {
+                new Claim(ClaimTypes.NameIdentifier, user.Id),
+                new Claim(ClaimTypes.Name, user.UserName),
+                new Claim(ClaimTypes.Email, user.Email),
+                // Add other claims as needed
+            };
+            
+            // Get user roles claims
+            var roleClaims = GetUserRolesClaims(user);
+
             var JwtTokenHandler = new JwtSecurityTokenHandler();
 
             var key = Encoding.UTF8.GetBytes(_configuration.GetSection("JwtConfig:Secret").Value);
 
             var configuration = HttpContext.RequestServices.GetRequiredService<IConfiguration>();
             var audience = configuration.GetSection("JwtConfig:Audience").Value;
-            var issuer =configuration.GetSection("JwtConfig:Issuer").Value;
+            var issuer = configuration.GetSection("JwtConfig:Issuer").Value;
 
-            // Get user roles claims
-            var roleClaims = GetUserRolesClaims(user);
-
-            //Token descriptor
+            // Token descriptor
             var tokenDescriptor = new SecurityTokenDescriptor()
             {
-                Subject = new ClaimsIdentity(new []
-                {
-                    new Claim("Id", user.Id),
-                    new Claim(JwtRegisteredClaimNames.Sub, user.Email),
-                    new Claim(JwtRegisteredClaimNames.Email, user.Email),
-                    new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                    new Claim(JwtRegisteredClaimNames.Iat, DateTime.Now.ToUniversalTime().ToString()),
-                    new Claim(JwtRegisteredClaimNames.Aud, audience ),
-                    new Claim(JwtRegisteredClaimNames.Iss, issuer),
-                }.Union(roleClaims)),
-
+                Subject = new ClaimsIdentity(claims.Union(roleClaims)),
                 NotBefore = DateTime.Now,
                 Expires = DateTime.Now.AddHours(1),
-                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key),SecurityAlgorithms.HmacSha256Signature)
+                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature),
+                Issuer = issuer,
+                Audience = audience,
             };
 
             var token = JwtTokenHandler.CreateToken(tokenDescriptor);
@@ -223,14 +227,14 @@ public class AccountController(
 
     private IEnumerable<Claim> GetUserRolesClaims(User user)
     {
-        // Get user roles
         var roles = _userManager.GetRolesAsync(user).Result;
-
-        // Create claims for each role
-        var roleClaims =roles?.Select(role => new Claim(ClaimTypes.Role, role)) ?? Enumerable.Empty<Claim>();
-
+        
+        // Convert each role to a claim
+        var roleClaims = roles.Select(role => new Claim(ClaimTypes.Role, role));
+        
         return roleClaims;
     }
+
 
 
 }

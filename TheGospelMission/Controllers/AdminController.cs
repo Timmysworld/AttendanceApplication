@@ -70,7 +70,7 @@ namespace TheGospelMission.Controllers
         }
 
         ///summary
-        /// RESTS USER PASSWORD after User requests
+        /// RESETS USER PASSWORD after User requests
         /// </summary>
         /// 
         [HttpPost]
@@ -98,10 +98,11 @@ namespace TheGospelMission.Controllers
             }
         }
 
+
     }
 
 
 }
 
-//TODO: DEACTIVATE USER
 //TODO: READ, UPDATE AND DEACTIVATE ATTENDANCE RECORDS
+//TODO: NEED TO FINISH SETTING UP DASHBOARD
