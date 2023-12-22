@@ -141,10 +141,11 @@ app.Use(async (context, next) =>
     }
 });
 
-app.UseCors();
+
 
 // Authentication and Authorization
 app.UseRouting();
+app.UseCors();
 app.UseAuthentication();
 app.UseAuthorization();
 app.UseEndpoints(endpoints => { _ = endpoints.MapControllers(); }); // Empty UseEndpoints

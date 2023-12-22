@@ -1,0 +1,17 @@
+.card {
+  padding: 1rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+  border-radius: 14px;
+  background-color: white;
+  width: 50%;
+  height: 90%;
+}
+
+/* Media query for screens 425px and smaller */
+@media (max-width: 425px) {
+  .card {
+      width: 95%;
+      height: auto;
+      max-height: none; /* Reset max-height if needed */
+  }
+}

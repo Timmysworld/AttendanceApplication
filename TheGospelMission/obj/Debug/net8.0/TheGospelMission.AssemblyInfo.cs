@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("TheGospelMission")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+5667474dafcfdf90773dd03ebe67778761f8bcdb")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+eb60378a5c5b58e637aca9396639bee2107a2560")]
 [assembly: System.Reflection.AssemblyProductAttribute("TheGospelMission")]
 [assembly: System.Reflection.AssemblyTitleAttribute("TheGospelMission")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

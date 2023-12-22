@@ -1,25 +1,24 @@
-import { useEffect, useState } from 'react'
-import axios from 'axios';
+import { Link } from "react-router-dom"
+import Button from "../UI/Button"
+
 const Home = () => {
-    const [data, setData] = useState(null);
-
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const response = await axios.get('http://localhost:5180');
-                setData(response.data);
-            } catch (error) {
-                console.error('Error fetching data:', error);
-            }
-        };
-
-        fetchData();
-    }, []);
   return (
-    <div>
-            <h1>{data ? data.message : 'Loading...'}</h1>
-            {/* Add other components and logic as needed */}
+    <>
+    <div className="wrapper">
+      <div className="index-page">
+        <h1 className="index-heading">The Gospel Mission</h1>
+        <div>
+          <p className="index-subheading"> Attendance Tracker </p>
         </div>
+        <div className="index-actions">
+          <Link to='api/account/register'><Button>Register</Button></Link>
+          <Link to='api/account/login'><Button>Login</Button></Link>
+      </div>
+      </div>  
+    </div>
+      
+    </>
+
   )
 }
 
