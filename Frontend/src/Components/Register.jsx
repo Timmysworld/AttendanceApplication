@@ -1,8 +1,11 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import Input from '../UI/Input';
+import Select from '../UI/Select';
 import classes from '../Components/Register.module.css'
 import Button from '../UI/Button';
+import { isEmail } from '../Utils/Validation';
+
 
 
 
@@ -26,6 +29,7 @@ const Register = () => {
   const [churchData, setChurchData] = useState({
     Church: '',
   });
+
 
   // Fetch church names from the API when the component mounts
   useEffect(() => {
@@ -61,11 +65,22 @@ const Register = () => {
     }));
   };
 
+
   const handleSubmit = async (event) => {
     // Prevent the default form submission behavior
     event.preventDefault();
   
     try {
+
+          // Validate email
+    if (formData.Email.trim() === '') {
+      throw new Error('Email is required');
+    }
+
+    if (!isEmail(formData.Email)) {
+      throw new Error('Invalid email format');
+    }
+
       // Create a copy of the form data and convert the Church field to a number if it's not an empty string
       const dataToSend = { ...formData, Church: formData.Church === '' ? null : +formData.Church };
   
@@ -101,38 +116,27 @@ const Register = () => {
 
         {/* Render input fields */}
         <div className={classes.formGroup}>
-          
-          ``//* IMPORTANT THE ERRORS ARE NOT SHOWING UP AS THEY SHOULD  
-          <Input label='UserName' id='username' type='text' name='UserName' onChange={handleChange} />
-          {errors && errors.UserName && (
-            <div className={classes.errorMessage}>{errors.UserName.join(', ')}</div>
-          )}
+          <Input label='UserName' id='username' type='text' name='UserName' onChange={handleChange} error={errors && errors.Username && errors.Username.join(', ')} />
 
-          <Input label='FirstName' id='firstname' type='text' name='FirstName' onChange={handleChange} />
-          <Input label='LastName' id='lastname' type='text' name='LastName' onChange={handleChange} />
+          <Input label='FirstName' id='firstname' type='text' name='FirstName' onChange={handleChange} error={errors && errors.FirstName && errors.FirstName.join(', ')}  />
+          <Input label='LastName' id='lastname' type='text' name='LastName' onChange={handleChange}error={errors && errors.LastName && errors.LastName.join(', ')}  />
         </div>
 
-        <Input label='Password' id='password' type='password' name='Password' onChange={handleChange} />
-        <Input label='Email' id='Email' type='email' name='Email' onChange={handleChange} />
-        <Input label='Gender' id='gender' type='text' name='Gender' onChange={handleChange} />
+        <Input label='Email' id='Email' type='email' name='Email' onChange={handleChange}error={errors && errors.Email && errors.Email.join(', ')}  />
+        <Input label='Gender' id='gender' type='text' name='Gender' onChange={handleChange}error={errors && errors.Gender && errors.Gender.join(', ')}  />
 
         {/* Render church dropdown */}
-        <label htmlFor="church" className={classes.label}>
-            Church
-          </label>
-        <select name="Church" value={formData.Church} onChange={handleChange}>
-          <option value="" disabled>
-            -- Select a Church --
-          </option>
+        <Select
+          label='Church'
+          name='Church'
+          value={formData.Church}
+          options={churchData.Church || []} // Ensure that options is an array
+          error={errors && errors.Church}
+          onChange={handleChange}
+        />
 
-          {/* Populate church options based on available data */}
-          {churchData.Church &&
-            churchData.Church.map((church) => (
-              <option key={church.churchId} value={church.churchId}>
-                {church.churchName}
-              </option>
-            ))}
-        </select>
+        <Input label='Password' id='password' type='password' name='Password' onChange={handleChange}error={errors && errors.Password && errors.Password.join(', ')}  />
+
 
         {/* Render form action buttons */}
         <p className={classes.formActions}>
@@ -146,3 +150,4 @@ const Register = () => {
 
 export default Register;
 //TODO: I need to set up reset form button.
+//* IMPORTANT: WORKING ON GETTING THE EMAIL TO BE VALIDATED AND ERRORS SHOW BASED ON USER INVALID INPUTS. IN CONSOLE ERROR Register.jsx:94 Uncaught (in promise) TypeError: Cannot read properties of undefined (reading 'status')

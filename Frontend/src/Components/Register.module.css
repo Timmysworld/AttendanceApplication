@@ -65,11 +65,7 @@ select {
     width: 100%;
 }
 
-.errorMessage {
-    color: red;
-    font-size: 0.8rem;
-    margin-top: 5px;
-}
+
 
 /* Media query for screens 425px and smaller */
 @media (max-width: 425px) {

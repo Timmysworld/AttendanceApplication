@@ -14,6 +14,12 @@ body {
     min-height: 100vh;
 }
 
+.error {
+    color: red;
+    font-size: 0.8rem;
+    margin-top: 5px;
+}
+
 .button {
     font: roboto;
     font-size: large;
