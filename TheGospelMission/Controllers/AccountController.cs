@@ -4,6 +4,7 @@ using System.Text;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
+using TheGospelMission.Exceptions;
 using TheGospelMission.Models;
 using TheGospelMission.Services;
 
@@ -27,141 +28,11 @@ public class AccountController(
     private readonly ChurchServices _churchService = churchService;
 
 
-    // [HttpPost]
-    // [Route("Register")]
-    // public async Task<IActionResult> Register([FromBody] RegisterModel register)
-    // {
-    //     try
-    //     {
-    //         //validate incoming request
-    //         if(ModelState.IsValid)
-    //         {
-    //             //check if the email already exist
-    //             var user_exist = await _userManager.FindByEmailAsync(register.Email);
-
-    //             if(user_exist != null)
-    //             {
-    //                 return BadRequest(new AuthResult()
-    //                 {
-    //                     Status = "Failed",
-    //                     Result = false,
-    //                     Errors = new List<string>()
-    //                     {
-    //                         "Email already exist"
-    //                     }
-    //                 });
-    //             }
-
-    //             //create user
-    //             var new_user = new User()
-    //             {
-                    
-    //                 UserName = register.Username,
-    //                 FirstName = register.FirstName,
-    //                 LastName = register.LastName,
-    //                 Email = register.Email,
-    //                 Gender = register.Gender,
-    //                 ChurchId = register.Church
-                    
-    //             };
-
-    //             var is_created = await _userManager.CreateAsync(new_user, register.Password);
-
-    //             if(is_created.Succeeded)
-    //             {
-                    
-    //                 //generate token
-    //                 //var token = GenerateJwtToken(new_user);
-
-    //                 return Ok(new AuthResult() 
-    //                 {   Status = "Success", 
-    //                     Message = "User created successfully!",
-    //                     // Token = token
-    //                 });
-
-    //             }
-            
-    //             // Log the details of the failure
-    //                 _logger.LogError($"User registration failed: {string.Join(", ", is_created.Errors)}");
-
-    //             return BadRequest(new AuthResult()
-    //             {
-    //                 Errors = new List<string>()
-    //                 {
-    //                     "Server Error"
-    //                 },
-    //                 Status = "Failed",
-    //             });
-    //         }
-    //     }    
-    //     catch (Exception ex)
-    //         {
-    //             // Log unexpected exceptions
-    //             _logger.LogError($"An unexpected error occurred during user registration: {ex}");
-    //             return StatusCode(StatusCodes.Status500InternalServerError, "An unexpected error occurred.");
-    //         }
-
-    //     return BadRequest();
-    // }
-
     [HttpPost]
-[Route("Register")]
-public async Task<IActionResult> Register([FromBody] RegisterModel register)
-{
-    try
+    [Route("Register")]
+    public async Task<IActionResult> Register([FromBody] RegisterModel register)
     {
-        // Validate incoming request
-        if (ModelState.IsValid)
-        {
-            // Check if the email already exists
-            var userExist = await _userManager.FindByEmailAsync(register.Email);
-
-            if (userExist != null)
-            {
-                return Conflict(new AuthResult
-                {
-                    Status = "Failed",
-                    Result = false,
-                    Errors = new List<string> { "Email already exists" }
-                });
-            }
-
-            // Create user
-            var newUser = new User
-            {
-                UserName = register.Username,
-                FirstName = register.FirstName,
-                LastName = register.LastName,
-                Email = register.Email,
-                Gender = register.Gender,
-                ChurchId = register.Church
-            };
-
-            var creationResult = await _userManager.CreateAsync(newUser, register.Password);
-
-            if (creationResult.Succeeded)
-            {
-                // Generate token
-                // var token = GenerateJwtToken(newUser);
-
-                return Ok(new AuthResult
-                {
-                    Status = "Success",
-                    Message = "User created successfully!",
-                    // Token = token
-                });
-            }
-
-            // Log the details of the failure
-            _logger.LogError($"User registration failed: {string.Join(", ", creationResult.Errors)}");
-
-            return BadRequest(new AuthResult
-            {
-                Errors = creationResult.Errors.Select(error => error.Description).ToList(),
-                Status = "Failed"
-            });
-        }
-        else
+        if (!ModelState.IsValid)
         {
             // ModelState is invalid, return detailed validation errors
             return BadRequest(new AuthResult
@@ -170,20 +41,63 @@ public async Task<IActionResult> Register([FromBody] RegisterModel register)
                 Status = "Failed"
             });
         }
+
+        var userExist = await _userManager.FindByEmailAsync(register.Email);
+        if (userExist != null)
+        {
+            // User already exists, throw exception
+            throw new UserExistsException(userExist.UserName, userExist.Email)
+            {
+                ExistingUsername = userExist.UserName,
+                ExistingUserEmail = userExist.Email
+            };
+        }
+
+        // Check if the password and confirm password match
+        if (register.Password != register.ConfirmPassword)
+        {
+            return BadRequest("Passwords must match");
+        }
+
+        // Create user
+        var newUser = new User
+        {
+            UserName = register.Username,
+            FirstName = register.FirstName,
+            LastName = register.LastName,
+            Email = register.Email,
+            Gender = register.Gender,
+            ChurchId = register.Church
+        };
+
+        var creationResult = await _userManager.CreateAsync(newUser, register.Password);
+
+        if (creationResult.Succeeded)
+        {
+            return Ok(new AuthResult
+            {
+                Status = "Success",
+                Message = "User created successfully!"
+            });
+        }
+
+        // Log the details of the failure
+        _logger.LogError($"User registration failed: {string.Join(", ", creationResult.Errors)}");
+
+        return BadRequest(new AuthResult
+        {
+            Errors = creationResult.Errors.Select(error => error.Description).ToList(),
+            Status = "Failed"
+        });
     }
-    catch (Exception ex)
-    {
-        // Log unexpected exceptions
-        _logger.LogError($"An unexpected error occurred during user registration: {ex}");
-        return StatusCode(StatusCodes.Status500InternalServerError, "An unexpected error occurred.");
-    }
-}
+
 
 
     //TODO: NEED TO SET UP REDIRECT TO SUCCESSFUL REGISTER PAGE.
     //TODO: NEED TO MAKE A LOG OUT ROUTE
 
-    [HttpPost("Login")]
+    [HttpPost]
+    [Route("Login")]
     public async Task<IActionResult> Login([FromBody]LoginModel login)
     {
         try

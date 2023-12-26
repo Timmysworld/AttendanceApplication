@@ -154,12 +154,6 @@ app.UseStaticFiles(); // Serve other static files
 // Map Controllers
 app.MapControllers();
 
-// // Default Route
-// app.MapGet("/", () =>
-// {
-//     // Return your landing page content or redirect to a dedicated landing page controller action
-//     return "Hello World!";
-// });
 
 using (var scope = app.Services.CreateScope())
 {
