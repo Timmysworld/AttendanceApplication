@@ -17,7 +17,7 @@ internal class UserExistsException : UserException
 
         // Custom constructor to set additional properties
         public UserExistsException(string existingUsername, string existingUserEmail)
-            : base("User already exist. Did you forget your password?") //$"User with username '{existingUsername}' and Email '{existingUserEmail}' already exists."
+            : base("User with this email already exists. Please log in or use a different email.") //$"User with username '{existingUsername}' and Email '{existingUserEmail}' already exists."
         {
             ExistingUsername = existingUsername;
             ExistingUserEmail = existingUserEmail;

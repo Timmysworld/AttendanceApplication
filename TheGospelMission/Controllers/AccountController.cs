@@ -28,68 +28,69 @@ public class AccountController(
     private readonly ChurchServices _churchService = churchService;
 
 
-    [HttpPost]
-    [Route("Register")]
-    public async Task<IActionResult> Register([FromBody] RegisterModel register)
+[HttpPost]
+[Route("Register")]
+public async Task<IActionResult> Register([FromBody] RegisterModel register)
+{
+    if (!ModelState.IsValid)
     {
-        if (!ModelState.IsValid)
-        {
-            // ModelState is invalid, return detailed validation errors
-            return BadRequest(new AuthResult
-            {
-                Errors = ModelState.Values.SelectMany(v => v.Errors.Select(e => e.ErrorMessage)).ToList(),
-                Status = "Failed"
-            });
-        }
-
-        var userExist = await _userManager.FindByEmailAsync(register.Email);
-        if (userExist != null)
-        {
-            // User already exists, throw exception
-            throw new UserExistsException(userExist.UserName, userExist.Email)
-            {
-                ExistingUsername = userExist.UserName,
-                ExistingUserEmail = userExist.Email
-            };
-        }
-
-        // Check if the password and confirm password match
-        if (register.Password != register.ConfirmPassword)
-        {
-            return BadRequest("Passwords must match");
-        }
-
-        // Create user
-        var newUser = new User
-        {
-            UserName = register.Username,
-            FirstName = register.FirstName,
-            LastName = register.LastName,
-            Email = register.Email,
-            Gender = register.Gender,
-            ChurchId = register.Church
-        };
-
-        var creationResult = await _userManager.CreateAsync(newUser, register.Password);
-
-        if (creationResult.Succeeded)
-        {
-            return Ok(new AuthResult
-            {
-                Status = "Success",
-                Message = "User created successfully!"
-            });
-        }
-
-        // Log the details of the failure
-        _logger.LogError($"User registration failed: {string.Join(", ", creationResult.Errors)}");
-
+        // ModelState is invalid, return detailed validation errors
         return BadRequest(new AuthResult
         {
-            Errors = creationResult.Errors.Select(error => error.Description).ToList(),
+            Errors = ModelState.Values.SelectMany(v => v.Errors.Select(e => e.ErrorMessage)).ToList(),
             Status = "Failed"
         });
+
     }
+
+    var userExist = await _userManager.FindByEmailAsync(register.Email);
+    if (userExist != null)
+    {
+        // User already exists, throw exception
+        throw new UserExistsException(userExist.UserName, userExist.Email)
+        {
+            ExistingUsername = userExist.UserName,
+            ExistingUserEmail = userExist.Email
+        };
+    }
+
+    // Check if the password and confirm password match
+    if (register.Password != register.ConfirmPassword)
+    {
+        return BadRequest("Passwords must match");
+    }
+
+    // Create user
+    var newUser = new User
+    {
+        UserName = register.Username,
+        FirstName = register.FirstName,
+        LastName = register.LastName,
+        Email = register.Email,
+        Gender = register.Gender,
+        ChurchId = register.Church
+    };
+
+    var creationResult = await _userManager.CreateAsync(newUser, register.Password);
+
+    if (creationResult.Succeeded)
+    {
+        return Ok(new AuthResult
+        {
+            Status = "Success",
+            Message = "User created successfully!"
+        });
+    }
+
+    // Log the details of the failure
+    _logger.LogError($"User registration failed: {string.Join(", ", creationResult.Errors)}");
+
+    return BadRequest(new AuthResult
+    {
+        Errors = creationResult.Errors.Select(error => error.Description).ToList(),
+        Status = "Failed"
+    });
+}
 
 
 
