@@ -1,15 +1,21 @@
+.success{
+    color: green;
+}
+.error{
+    color: red;
+}
+
 .heading{
     font-family: "Oswald";
-    font-size: 2.5rem;
+    font-size: 1.5rem;
     color: black;
-    padding: 4px;
     text-align: center;
     margin-bottom: 20px;
 
 }
 .signIn{
     color: black;
-    font-size: 1.2rem!important;
+    font-size: 1rem!important;
     margin-top:-25px
 }
 a{
@@ -49,7 +55,7 @@ a{
     margin-bottom: 20px;
 }
 
-select {
+select,input {
     width: 100%;
     padding: 8px;
     font-size: 16px;

@@ -68,13 +68,19 @@ body {
     /* margin: auto; */
 }
 
-input {
+.inputComponent,
+.selectComponent{
+    color: black;
+}
+
+
+/* input {
     width: 100%;
     padding: 12px;
     font-size: 16px;
     border: 1px solid #ccc;
     border-radius: 4px;
-}
+} */
 
 
 /* RESPONSIVE DESIGN */

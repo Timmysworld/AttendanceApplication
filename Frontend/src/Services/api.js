@@ -1,6 +1,9 @@
 import axios from 'axios';
 
 const baseURL = 'http://localhost:5180/api';
+const httpClient = axios.create({
+    baseURL: 'http://localhost:5180/api/'
+});
 
 const handleApiResponse = function (httpResponse){
     if (httpResponse.status >= 200 && httpResponse.status < 300) {
@@ -85,5 +88,5 @@ const api = (axios) => {
     };
 };
 
-export const httpSmartClient = api(axios);
-export default axios;
+export const httpSmartClient = api(httpClient);
+export default httpClient;
