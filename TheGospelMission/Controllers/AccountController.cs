@@ -185,9 +185,16 @@ public async Task<IActionResult> Register([FromBody] RegisterModel register)
                 new Claim(ClaimTypes.NameIdentifier, user.Id),
                 new Claim(ClaimTypes.Name, user.UserName),
                 new Claim(ClaimTypes.Email, user.Email),
+                // new Claim("GroupId", user.GroupId?.ToString() ?? string.Empty),
+
                 // Add other claims as needed
             };
-            
+               // Add GroupId claim if it's not null
+            if (user.GroupId.HasValue)
+            {
+                claims.Add(new Claim("GroupId", user.GroupId.Value.ToString()));
+            }
+            _logger.LogInformation("Claims before token creation: {Claims}", claims);
             // Get user roles claims
             var roleClaims = GetUserRolesClaims(user);
 
@@ -212,7 +219,7 @@ public async Task<IActionResult> Register([FromBody] RegisterModel register)
 
             var token = JwtTokenHandler.CreateToken(tokenDescriptor);
             var jwtToken = JwtTokenHandler.WriteToken(token);
-            return jwtToken;
+            return jwtToken.ToString();
         }
         catch (Exception ex)
         {
@@ -231,7 +238,4 @@ public async Task<IActionResult> Register([FromBody] RegisterModel register)
         
         return roleClaims;
     }
-
-
-
 }

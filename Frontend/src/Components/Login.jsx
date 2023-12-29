@@ -1,28 +1,42 @@
 import { useRef, useState } from 'react';
 import {useForm} from 'react-hook-form'
+import {useNavigate} from 'react-router-dom'
+import { decodeToken } from '../Utils/AuthUtils';
 import Input from '../UI/Input';
 import Button from '../UI/Button';
 import classes from "../Components/Login.module.css"
 import AccountService from '../Services/AccountService';
+// import AdminService from '../Services/AdminService';
 
 
 const Login = () => {
     const {register, handleSubmit,reset, formState:{errors}} = useForm();
     const [error, setErrors] = useState();
     const formRef = useRef();
-    // const [error, setErrors] = useState(null);
+    const navigate = useNavigate();
 
-
+//TODO: NEED TO WORK OUT THE BUGS TO HANDLE SERVER ERRORS, USER EXIST, INVALID CREDENTIALS, ALL ARE NOT ABLE TO SHOW PROPERLY ON FRONTEND.
     const onSubmit = async (data) => {
         console.log("form submitted", data);
 
         try {
             let response = await AccountService.login(data);
             console.log("Server Response:", response);
+            console.log('Raw Token:', response.token);
 
             if (response && response.result) {
                 // Handle successful login, reset server error state
                 setErrors(null);
+                // Decode the JWT token to get user roles and groupId
+            const decodedToken = decodeToken(response.token);
+            console.log('Decoded Token:', decodedToken);
+
+            // Determine the dashboard URL based on user roles and groupId
+            const dashboardUrl = getDashboardUrl(decodedToken);
+            console.log('Dashboard URL:', dashboardUrl);
+
+            // Redirect to the dashboard
+            navigate(dashboardUrl);
             } else if (response && response.errors && response.errors.$values) {
                 // Set user-friendly error message for specific error types
                 const firstError = response.errors.$values[0];
@@ -56,6 +70,25 @@ const Login = () => {
             setErrors("An unexpected error occurred. Please try again later.");
         }
     };
+    
+    //TODO:TODO: NEED TO FIGURE OUT WHY WHEN I ADD API TO THE URL THE PAGE STAYS ON LOGIN SCREEN, BUT CONSOLE SHOWS EVERYTHING IS GOOD. THEN WHEN I REMOVE API FROM APP.JSX IT ROUTES BUT TO BLANK SCREEN, AND CONSOLES SHOWS NO ROUTES MATCHED LOCATION "/API/ADMIN/DASHBOARD
+    const getDashboardUrl = (decodedToken) => {
+        console.log('Decoded Roles:', decodedToken.role);
+        
+        const isOverseer = decodedToken.role.includes('Overseer');
+        console.log('Is Overseer:', isOverseer);
+    
+        const hasGroupId = decodedToken.GroupId !== null && decodedToken.GroupId !== undefined;
+        console.log('Has GroupId:', hasGroupId);
+    
+        const dashboardUrl = isOverseer ? '/api/admin/dashboard' : (hasGroupId ? `/api/user/dashboard/${decodedToken.GroupId}` : '/');
+        console.log('Dashboard URL:', dashboardUrl);
+    
+        return dashboardUrl;
+    };
+
+    
+    
     
     return ( 
         <>
@@ -109,10 +142,8 @@ const Login = () => {
         </div>
         </form>
         </>
-    
-    
-
     )
+
 }
 
 export default Login
