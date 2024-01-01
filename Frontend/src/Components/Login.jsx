@@ -1,7 +1,7 @@
 import { useRef, useState } from 'react';
 import {useForm} from 'react-hook-form'
 import {useNavigate} from 'react-router-dom'
-import { decodeToken } from '../Utils/AuthUtils';
+import { decodeToken, storeToken } from '../Utils/AuthUtils';
 import Input from '../UI/Input';
 import Button from '../UI/Button';
 import classes from "../Components/Login.module.css"
@@ -22,7 +22,11 @@ const Login = () => {
         try {
             let response = await AccountService.login(data);
             console.log("Server Response:", response);
-            console.log('Raw Token:', response.token);
+            //console.log('Raw Token:', response.token);
+            if(response && response.token){
+                const token = response.token;
+                storeToken(token);
+            }
 
             if (response && response.result) {
                 // Handle successful login, reset server error state
@@ -33,10 +37,11 @@ const Login = () => {
 
             // Determine the dashboard URL based on user roles and groupId
             const dashboardUrl = getDashboardUrl(decodedToken);
-            console.log('Dashboard URL:', dashboardUrl);
+            //console.log('Dashboard URL:', dashboardUrl);
 
             // Redirect to the dashboard
             navigate(dashboardUrl);
+
             } else if (response && response.errors && response.errors.$values) {
                 // Set user-friendly error message for specific error types
                 const firstError = response.errors.$values[0];
@@ -138,7 +143,7 @@ const Login = () => {
             <Button className={classes.button}>Login</Button>
         </p>
         <div className=''>
-            <p className=''>Forgot Password? </p>
+            <a href=""> <p className=''>Forgot Password </p></ a>
         </div>
         </form>
         </>

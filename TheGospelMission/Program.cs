@@ -141,6 +141,21 @@ app.Use(async (context, next) =>
     }
 });
 
+// Middleware for serving index.html for client-side routing
+app.Use(async (context, next) =>
+{
+    await next();
+
+    // If no response is handled and the request is not for a file extension,
+    // assume it's a client-side route and serve the index.html.
+    if (context.Response.StatusCode == 404 && !Path.HasExtension(context.Request.Path.Value))
+    {
+        context.Request.Path = "/index.html";
+        await next();
+    }
+});
+
+
 
 
 // Authentication and Authorization

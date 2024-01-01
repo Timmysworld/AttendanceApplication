@@ -1,28 +1,30 @@
-import { retrieveToken } from "../Utils/AuthUtils"
-import {Navigate} from 'react-router-dom'
+import { useEffect } from 'react';
+import { retrieveToken } from "../Utils/AuthUtils";
+import { useNavigate } from 'react-router-dom';
+import Sidebar from '../Components/Sidebar';
+import Navbar from '../Components/Navbar';
 
-const DashboardLayout = ({children}) => {
-    const token =retrieveToken();
+const DashboardLayout = ({ children }) => {
+  const token = retrieveToken();
+  const navigate = useNavigate();
 
-    if(!token){
-        return <Navigate to='/api/account/login'/>
+  useEffect(() => {
+    if (!token && window.location.pathname !== '/api/account/login') {
+      navigate('/api/account/login');
     }
-
-      // Redirect if the user doesn't have the required role
-    // if (!hasPermission(allowedRoles)) {
-    //     return <Redirect to="/unauthorized" />;
-    // }
-
+  }, [token, navigate]);
 
   return (
     <div>
-        <header>DashboardLayout</header>
-        <nav></nav>
-        <main>
-            {children}
-        </main>
+        <Navbar/>
+        <Sidebar/>
+    
+      <main>
+        {children}
+      </main>
     </div>
-  )
-}
+    
+  );
+};
 
-export default DashboardLayout
+export default DashboardLayout;

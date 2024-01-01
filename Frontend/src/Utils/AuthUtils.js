@@ -9,14 +9,17 @@ const TOKEN_KEY = 'authToken';
 // const decoded = jwtDecode(token);
 
 // Function to store the token in a cookie
-export const storeToken = (token) => {
 // Set the token as an HTTP cookie with a 1-day expiration
-Cookies.set(TOKEN_KEY, token, { expires: 1 });
+export const storeToken = (token) => {
+    //console.log('Token to be stored:', token);
+    Cookies.set(TOKEN_KEY, token, { expires: 1 });
 };
 
 // Function to retrieve the token from the cookie
 export const retrieveToken = () => {
-return Cookies.get(TOKEN_KEY);
+    const token = Cookies.get(TOKEN_KEY);
+    //console.log('Retrieved Token:', token); // Log the retrieved token
+    return token;
 };
 
 // Function to clear the token from the cookie
@@ -44,7 +47,7 @@ export const getUserRoles = () => {
 const token = retrieveToken();
 if (token) {
     const decodedToken = decodeToken(token);
-    return decodedToken ? decodedToken.roles || [] : [];
+    return decodedToken ? decodedToken.role || [] : [];
 }
 return [];
 };
