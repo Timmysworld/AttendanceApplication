@@ -1,0 +1,7 @@
+.content {
+    display: grid;
+    grid-template-columns: 15% 85%;
+    height: 100dvh;
+    width: 100dvw;
+}
+

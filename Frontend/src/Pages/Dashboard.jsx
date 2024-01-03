@@ -1,6 +1,8 @@
 import {  useEffect, useState } from 'react';
-import DashboardLayout from '../Layouts/DashboardLayout';
 import { getUserRoles } from '../Utils/AuthUtils';
+import {Box} from "@mui/material"
+import DashboardLayout from '../Layouts/DashboardLayout';
+import Header from '../Components/Header';
 
 
 const Dashboard = () => {
@@ -27,10 +29,17 @@ const Dashboard = () => {
     <DashboardLayout allowedRoles={['Overseer', 'GroupLeader']}>
       {/* Your dashboard content based on userRoles */}
       {userRoles.includes('Overseer') && (
-        <h1>Welcome to the ADMIN Dashboard</h1>
+        <>
+          <Box display="flex" justifyContent="space-between" alignItems="center">
+          <Header title="Admin Dashboard" subtitle="Welcome to your dashboard"/>
+        </Box>
+        </>
+        
       )}
       {userRoles.includes('GroupLeader') && (
-        <h1>Welcome to the USER Dashboard</h1>
+        <Box display="flex" justifyContent="space-between" alignItems="center">
+          <Header title="Group Leader Dashboard" subtitle="Welcome to your dashboard"/>
+        </Box>
       )}
     </DashboardLayout>
   );

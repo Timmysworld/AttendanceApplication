@@ -11,7 +11,23 @@ body {
     -moz-osx-font-smoothing: grayscale;
     background: linear-gradient(#0802ae, #000033);
     color: #d9e2f1;
-    min-height: 100vh;
+    min-height: 100dvh;
+}
+
+::-webkit-scrollbar{
+    width:10px;
+}
+/* Track */
+::-webkit-scrollbar-track{
+    background-color: #e0e0e0;
+}
+/* Handle */
+::-webkit-scrollbar-thumb{
+    background-color: #888;
+}
+/* Handle on Hover */
+::-webkit-scrollbar-track:hover{
+    background-color: #555;
 }
 .success{
     color: green;
@@ -30,22 +46,22 @@ body {
     background-color: #147b73;
     color: #d9e2f1;
     cursor: pointer;
-  }
+}
 
-  .button:hover,
+.button:hover,
 .button:focus {
-  background-color: #869999;
+    background-color: #869999;
 }
 
 .button-flat {
-  background-color: transparent;
-  color: #9cbaba;
+    background-color: transparent;
+    color: #9cbaba;
 }
 
 .button-flat:hover,
 .button-flat:focus {
-  background-color: transparent;
-  color: #869999;
+    background-color: transparent;
+    color: #869999;
 }
 
 .wrapper{
