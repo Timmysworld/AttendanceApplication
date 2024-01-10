@@ -1,12 +1,14 @@
 import { useRef, useState } from 'react';
 import {useForm} from 'react-hook-form'
-import {useNavigate} from 'react-router-dom'
+import {useNavigate, NavLink} from 'react-router-dom'
 import { decodeToken, storeToken } from '../Utils/AuthUtils';
 import Input from '../UI/Input';
 import Button from '../UI/Button';
 import classes from "../Components/Login.module.css"
 import AccountService from '../Services/AccountService';
-// import AdminService from '../Services/AdminService';
+//import AuthContext from '../Utils/AuthProvider';
+import { useAuth } from '../Utils/AuthProvider';
+
 
 
 const Login = () => {
@@ -15,6 +17,10 @@ const Login = () => {
     const formRef = useRef();
     const navigate = useNavigate();
 
+      // Use the useContext hook to get the current context value
+    const authContext = useAuth();
+
+
 //TODO: NEED TO WORK OUT THE BUGS TO HANDLE SERVER ERRORS, USER EXIST, INVALID CREDENTIALS, ALL ARE NOT ABLE TO SHOW PROPERLY ON FRONTEND.
     const onSubmit = async (data) => {
         console.log("form submitted", data);
@@ -22,61 +28,58 @@ const Login = () => {
         try {
             let response = await AccountService.login(data);
             console.log("Server Response:", response);
+
             //console.log('Raw Token:', response.token);
-            if(response && response.token){
+            if (response && response.token) {
                 const token = response.token;
                 storeToken(token);
-            }
-
-            if (response && response.result) {
-                // Handle successful login, reset server error state
-                setErrors(null);
+        
                 // Decode the JWT token to get user roles and groupId
-            const decodedToken = decodeToken(response.token);
-            console.log('Decoded Token:', decodedToken);
-
-            // Determine the dashboard URL based on user roles and groupId
-            const dashboardUrl = getDashboardUrl(decodedToken);
-            //console.log('Dashboard URL:', dashboardUrl);
-
-            // Redirect to the dashboard
-            navigate(dashboardUrl);
-
+                const decodedToken = decodeToken(response.token);
+        
+                // Set userRoles in the auth state using the context value
+                authContext.setToken(token);
+                
+        
+                // Determine the dashboard URL based on user roles and groupId
+                const dashboardUrl = getDashboardUrl(decodedToken);
+        
+                // Redirect to the dashboard
+                navigate(dashboardUrl);
             } else if (response && response.errors && response.errors.$values) {
-                // Set user-friendly error message for specific error types
-                const firstError = response.errors.$values[0];
-                console.log("First Error:", firstError);
-
-                switch (firstError) {
-                    case "Invalid Credentials":
-                        setErrors("Invalid username or password. Please try again.");
-                        break;
-                    case "User doesn't exist":
-                        setErrors("User not found. Please create an account.");
-                        break;
-                    case "Network Error":
-                        setErrors("Network error. Please check your internet connection.");
-                        break;
-                    case "Server Unavailable":
-                        setErrors("The server is currently unavailable. Please try again later.");
-                        break;
-                    default:
-                        // Handle other unexpected errors
-                        setErrors("An unexpected error occurred. Please try again later.");
-                }
+            // Handle specific error types
+            const firstError = response.errors.$values[0];
+            handleServerError(firstError);
             } else {
-                // Handle other unexpected cases
-                setErrors("An unexpected error occurred. Please try again later.");
+            // Handle other unexpected cases
+            setErrors("An unexpected error occurred. Please try again later.");
             }
         } catch (error) {
             console.error("Error during login:", error);
-
-            // Handle other errors (e.g., network issues) and set the error in state
             setErrors("An unexpected error occurred. Please try again later.");
         }
     };
-    
-    //TODO:TODO: NEED TO FIGURE OUT WHY WHEN I ADD API TO THE URL THE PAGE STAYS ON LOGIN SCREEN, BUT CONSOLE SHOWS EVERYTHING IS GOOD. THEN WHEN I REMOVE API FROM APP.JSX IT ROUTES BUT TO BLANK SCREEN, AND CONSOLES SHOWS NO ROUTES MATCHED LOCATION "/API/ADMIN/DASHBOARD
+
+    const handleServerError = (errorType) => {
+        switch (errorType) {
+            case "Invalid Credentials":
+            setErrors("Invalid username or password. Please try again.");
+            break;
+            case "User doesn't exist":
+            setErrors("User not found. Please create an account.");
+            break;
+            case "Network Error":
+            setErrors("Network error. Please check your internet connection.");
+            break;
+            case "Server Unavailable":
+            setErrors("The server is currently unavailable. Please try again later.");
+            break;
+            default:
+            // Handle other unexpected errors
+            setErrors("An unexpected error occurred. Please try again later.");
+        }
+    };
+
     const getDashboardUrl = (decodedToken) => {
         console.log('Decoded Roles:', decodedToken.role);
         
@@ -100,7 +103,7 @@ const Login = () => {
         <form onSubmit={handleSubmit(onSubmit)} noValidate>
         <div className={classes.heading}>
             <h2 className={classes.heading} >Login</h2>
-            <p className={classes.register}> Need an account <a href='register'>Register </a></p>
+            <p className={classes.register}> Need an account <NavLink to='/api/account/register'>Register </NavLink></p>
         </div>
 
         {error && (
@@ -143,7 +146,7 @@ const Login = () => {
             <Button className={classes.button}>Login</Button>
         </p>
         <div className=''>
-            <a href=""> <p className=''>Forgot Password </p></ a>
+            <NavLink to=''> <p className=''>Forgot Password </p></NavLink>
         </div>
         </form>
         </>

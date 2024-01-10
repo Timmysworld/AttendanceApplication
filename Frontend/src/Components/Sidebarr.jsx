@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Sidebar, Menu, MenuItem } from "react-pro-sidebar";
 // import 'react-pro-sidebar/dist/styles/styles.css';
 import{Box, IconButton,Typography, useTheme} from "@mui/material";
-import { Link } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import {tokens } from "../theme";
 import HomeOutlinedIcon from '@mui/icons-material/HomeOutlined';
 import PeopleOutlinedIcon from "@mui/icons-material/PeopleOutlined";
@@ -11,24 +11,19 @@ import MenuOutlinedIcon from '@mui/icons-material/MenuOutlined';
 import InventoryOutlinedIcon from '@mui/icons-material/InventoryOutlined';
 // import HelpOutlineOutlinedIcon from '@mui/icons-material/HelpOutlineOutlined';
 
-const Item = ({title, to, icon, selected, setSelected}) =>{
-  const theme = useTheme();
-  const colors = tokens(theme.palette.mode);
-  return(
-    //TODO: NEED TO FIX ERROR IN CONSOLE react-dom.development.js:86 Warning: validateDOMNesting(...): <a> cannot appear as a descendant of <a>.
-      <Link to={to} style={{ textDecoration: 'none' }}>
-        <MenuItem active={selected ===title} style={{color: colors.grey[100]}} onClick={()=> setSelected(title)} icon={icon}>
-            <Typography variant="body1">{title}</Typography>
-        </MenuItem>
-      </Link>
-  );
-};
 
 const Sidebarr = () => {
   const theme =useTheme();
   const colors = tokens(theme.palette.mode);
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [selected, setSelected]  = useState("Dashboard");
+
+
+  // Handle click event for menu items
+  const handleMenuItemClick = (title) => {
+    setSelected(title);
+    // Add any other logic you need here
+  };
   return (
     <Box 
       sx={{
@@ -106,41 +101,46 @@ const Sidebarr = () => {
           )}
 
           <Box paddingLeft={isCollapsed ? undefined : "10%"}>
-            <Item
-              title="Dashboard"
-              to="/api/admin/dashboard"
+            <MenuItem 
+              component={<NavLink to ="/api/admin/dashboard"/>}
               icon={<HomeOutlinedIcon />}
               selected={selected}
-              setSelected={setSelected}
-            />
-            <Item
-              title="User Management"
-              to="team"
+              onClick={() => handleMenuItemClick("Dashboard")}
+              >
+                Dashboard
+              </MenuItem>
+            <MenuItem
+              component={<NavLink to =""/>}
               icon={<PeopleOutlinedIcon />}
               selected={selected}
-              setSelected={setSelected}
-            />
-            <Item
-              title="Profile"
-              to="profile"
+              onClick={() => handleMenuItemClick("User Management")}
+              >
+              User Management
+            </MenuItem>
+            <MenuItem
+              component={<NavLink to =""/>}
               icon={<PersonOutlinedIcon />}
               selected={selected}
-              setSelected={setSelected}
-            />
-              <Item
-              title="Members"
-              to="/api/member/allMembers"
+              onClick={() => handleMenuItemClick("Profile")}
+              >
+                Profile
+              </MenuItem>
+              <MenuItem
+              component={<NavLink to ="members"/>}
               icon={<PersonOutlinedIcon />}
               selected={selected}
-              setSelected={setSelected}
-            />
-              <Item
-              title="Attendance"
-              to="attendance"
+              onClick={() => handleMenuItemClick("Members")}
+              >
+                Members
+              </MenuItem>
+              <MenuItem
+              component={<NavLink to =""/>}
               icon={<InventoryOutlinedIcon />}
               selected={selected}
-              setSelected={setSelected}
-            />
+              onClick={() => handleMenuItemClick("Attendance")}
+              >
+                Attendance
+              </MenuItem>
             
           </Box>
         </Menu>

@@ -1,16 +1,23 @@
 import { useEffect,useState } from 'react';
-import { retrieveToken } from "../Utils/AuthUtils";
+import { getUserRoles, retrieveToken } from "../Utils/AuthUtils";
 import { useNavigate } from 'react-router-dom';
 import Sidebarr from '../Components/Sidebarr';
 import Navbar from '../Components/Navbar';
 import classes from "../Layouts/DashboardLayout.module.css";
-import ErrorBoundary from '../ErrorBoundary';
+//import ErrorBoundary from '../ErrorBoundary';
 
 const DashboardLayout = ({ children }) => {
   // State to management
   const token = retrieveToken();
   const navigate = useNavigate();
   const [isSidebar, setIsSidebar] = useState(true);
+
+  const rolesFromAuthContext = getUserRoles();
+
+  useEffect(()=>{
+    console.log("DashboardLayout:", rolesFromAuthContext);
+  },[rolesFromAuthContext]);
+  
 
 
   useEffect(() => {
@@ -23,7 +30,7 @@ const DashboardLayout = ({ children }) => {
   return (
     <>
   
-      <ErrorBoundary fallback={<p>Something went wrong</p>}>
+      {/* <ErrorBoundary fallback={<p>Something went wrong</p>}> */}
 
 
       <div className={classes.layout}>
@@ -31,12 +38,12 @@ const DashboardLayout = ({ children }) => {
           <Sidebarr isSidebar={isSidebar} />
         <div>
           <Navbar setIsSidebar={setIsSidebar} />
-          {children}
+          {typeof children === 'function' && children({ userRoles: rolesFromAuthContext })}
         </div>
         </main>
       </div>
       
-      </ErrorBoundary>
+      {/* </ErrorBoundary> */}
     </>
       
     

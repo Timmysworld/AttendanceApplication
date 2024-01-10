@@ -2,6 +2,7 @@
 import Cookies from 'js-cookie';
 import  {jwtDecode}  from 'jwt-decode';
 
+
 // Define the token key
 const TOKEN_KEY = 'authToken';
 
@@ -51,5 +52,9 @@ if (token) {
 }
 return [];
 };
+// export const getUserRoles = () => {
+//     const { userRoles } = AuthContext._currentValue.auth;
+//     return userRoles;
+// };
 
 

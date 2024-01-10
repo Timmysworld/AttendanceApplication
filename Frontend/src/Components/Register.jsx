@@ -1,5 +1,6 @@
 import { useRef } from 'react';
 import {useForm, useController} from 'react-hook-form'
+import {NavLink} from 'react-router-dom'
 import {useEffect, useState} from 'react'
 import Input from '../UI/Input';
 import Select from '../UI/Select';
@@ -93,7 +94,7 @@ const onSubmit = async (data) => {
       <form onSubmit={handleSubmit(onSubmit)} noValidate>
       <div className={classes.heading}>
           <h2 className={classes.heading}>Registration</h2>
-          <p className={classes.signIn}>Already have an account <a href='login'>Sign In </a></p>
+          <p className={classes.signIn}>Already have an account <NavLink to='/api/account/login'>Sign In </NavLink></p>
         </div>
 
       <div className={classes.formGroup}>
