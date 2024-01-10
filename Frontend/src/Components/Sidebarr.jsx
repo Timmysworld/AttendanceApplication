@@ -10,6 +10,7 @@ import PersonOutlinedIcon from '@mui/icons-material/PersonOutlined';
 import MenuOutlinedIcon from '@mui/icons-material/MenuOutlined';
 import InventoryOutlinedIcon from '@mui/icons-material/InventoryOutlined';
 // import HelpOutlineOutlinedIcon from '@mui/icons-material/HelpOutlineOutlined';
+import { useAuth } from "../Utils/AuthProvider";
 
 
 const Sidebarr = () => {
@@ -17,6 +18,7 @@ const Sidebarr = () => {
   const colors = tokens(theme.palette.mode);
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [selected, setSelected]  = useState("Dashboard");
+  const { userRoles } = useAuth();
 
 
   // Handle click event for menu items
@@ -64,7 +66,7 @@ const Sidebarr = () => {
                 
               >
                 <Typography variant="h3" color={colors.grey[100]}>
-                  ADMIN
+                  {userRoles ==="Overseer" ? "Admin" : "User"}
                 </Typography>
                 <IconButton onClick={() => setIsCollapsed(!isCollapsed)}>
                   <MenuOutlinedIcon />
@@ -94,7 +96,7 @@ const Sidebarr = () => {
                   First & Last Name
                 </Typography>
                 <Typography variant="h5" color={colors.accentGreen[500]}>
-                  Overseer
+                {userRoles ==="Overseer" ? "Overseer" : "Group Leader"}
                 </Typography>
               </Box>
             </Box>

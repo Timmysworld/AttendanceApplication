@@ -25,6 +25,10 @@ function App() {
               <Route path="dashboard" element={<Dashboard />} />
               <Route path="members" element={<Members />} />
         </Route>
+        <Route path="/api/user/*" element={<DashboardLayout />}>
+              <Route path="dashboard" element={<Dashboard />} />
+              <Route path="members" element={<Members />} />
+        </Route>
         <Route path="/api/member/allMembers" element={<Members />} />
       </Routes>
 
