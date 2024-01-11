@@ -22,12 +22,12 @@ function App() {
         <Route path="/api/account/register" element={<Register/>}></Route>
         <Route path="/api/account/login" element={<Login/>}></Route>
         <Route path="/api/admin/*" element={<DashboardLayout />}>
-              <Route path="dashboard" element={<Dashboard />} />
-              <Route path="members" element={<Members />} />
+            <Route path="dashboard" element={<Dashboard />} />
+            <Route path="members" element={<Members />} />
         </Route>
         <Route path="/api/user/*" element={<DashboardLayout />}>
-              <Route path="dashboard" element={<Dashboard />} />
-              <Route path="members" element={<Members />} />
+            <Route path="dashboard" element={<Dashboard />} />
+            <Route path="members" element={<Members />} />
         </Route>
         <Route path="/api/member/allMembers" element={<Members />} />
       </Routes>
