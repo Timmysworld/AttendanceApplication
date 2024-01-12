@@ -8,6 +8,7 @@ import SecurityOutlinedIcon from "@mui/icons-material/SecurityOutlined"
 import Header from "../Components/Header";
 // import MemberService from "../Services/MemberService";
 import { mockDataTeam } from "../mockdata";
+// import DashboardLayout from "../Layouts/DashboardLayout";
 
 const Members = () => {
     const theme = useTheme();
@@ -113,6 +114,8 @@ const Members = () => {
 //     }, []);
     
   return (
+    <>
+
     <Box ml={6}>
         <Header title="All Members" subtitle="A List of all Members"/>
         <Box m="40px 0 0 0" height="75dvh" sx={{
@@ -153,6 +156,11 @@ const Members = () => {
                 /> */}
         </Box>
     </Box>
+    
+    </>
+
+
+    
   )
 }
 

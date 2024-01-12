@@ -104,7 +104,7 @@ const Sidebarr = () => {
 
           <Box paddingLeft={isCollapsed ? undefined : "10%"}>
             <MenuItem 
-              component={<NavLink to ="/api/admin/dashboard"/>}
+              component={<NavLink to="dashboard"/>}
               icon={<HomeOutlinedIcon />}
               selected={selected}
               onClick={() => handleMenuItemClick("Dashboard")}
@@ -112,7 +112,7 @@ const Sidebarr = () => {
                 Dashboard
               </MenuItem>
             <MenuItem
-              component={<NavLink to =""/>}
+              component={<NavLink to="user-management"/>}
               icon={<PeopleOutlinedIcon />}
               selected={selected}
               onClick={() => handleMenuItemClick("User Management")}
@@ -120,7 +120,7 @@ const Sidebarr = () => {
               User Management
             </MenuItem>
             <MenuItem
-              component={<NavLink to =""/>}
+              component={<NavLink to="profile"/>}
               icon={<PersonOutlinedIcon />}
               selected={selected}
               onClick={() => handleMenuItemClick("Profile")}
@@ -128,7 +128,7 @@ const Sidebarr = () => {
                 Profile
               </MenuItem>
               <MenuItem
-              component={<NavLink to ="members"/>}
+              component={<NavLink to="members"/>}
               icon={<PersonOutlinedIcon />}
               selected={selected}
               onClick={() => handleMenuItemClick("Members")}
@@ -136,7 +136,7 @@ const Sidebarr = () => {
                 Members
               </MenuItem>
               <MenuItem
-              component={<NavLink to =""/>}
+              component={<NavLink to="attendance"/>}
               icon={<InventoryOutlinedIcon />}
               selected={selected}
               onClick={() => handleMenuItemClick("Attendance")}

@@ -5,12 +5,16 @@ import Navbar from '../Components/Navbar';
 import classes from "../Layouts/DashboardLayout.module.css";
 import ErrorBoundary from '../ErrorBoundary';
 import { useAuth } from '../Utils/AuthProvider';
+import { Box } from '@mui/material';
+import { Outlet } from "react-router-dom";
 
-const DashboardLayout = ({ children}) => {
+
+const DashboardLayout = () => {
   // State to management
   const { token, userRoles } = useAuth(); 
   const navigate = useNavigate();
   const [isSidebar, setIsSidebar] = useState(true);
+  console.log("layout:",userRoles)
 
   
 
@@ -27,17 +31,16 @@ const DashboardLayout = ({ children}) => {
   
       <ErrorBoundary fallback={<p>Something went wrong</p>}>
 
-
-      <div className={classes.layout}>
-        <main className={classes.content}>
+        <main className={classes.layout}>
           <Sidebarr isSidebar={isSidebar} />
-        <div>
-          <Navbar setIsSidebar={setIsSidebar} />
-          {/* {children({ userRoles })} */}
-          {typeof children === 'function' ? children({ userRoles }) : null}
-        </div>
+          <Box className={classes.content}>
+            <Navbar setIsSidebar={setIsSidebar} />
+            {/* {children({ userRoles })} */}
+            {/* {typeof children === 'function' ? children({ userRoles }) : null} */}
+            <Outlet/>
+          </Box>
         </main>
-      </div>
+
       
       </ErrorBoundary>
     </>
