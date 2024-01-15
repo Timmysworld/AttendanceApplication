@@ -6,10 +6,9 @@
 }
 body {
     margin: 0;
-    /* font-family: 'Raleway', sans-serif; */
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    background: linear-gradient(#0802ae, #000033);
+    /* background: linear-gradient(#0802ae, #000033); */
     color: #d9e2f1;
     min-height: 100dvh;
 }
@@ -105,15 +104,6 @@ body {
 .selectComponent{
     color: black;
 }
-
-
-/* input {
-    width: 100%;
-    padding: 12px;
-    font-size: 16px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-} */
 
 
 /* RESPONSIVE DESIGN */

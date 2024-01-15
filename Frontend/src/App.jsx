@@ -9,6 +9,7 @@ import Members from './Pages/Members';
 
 import { ColorModeContext, useMode } from './theme';
 import { CssBaseline, ThemeProvider } from '@mui/material';
+import UserManagement from './Pages/UserManagement';
 
 function App() {
   const [theme, colorMode] = useMode();
@@ -27,6 +28,14 @@ function App() {
             <Route  element={<Outlet />}/>
               <Route path='dashboard' element={<Dashboard />} />
               <Route path="members" element={<Members />} />
+              <Route path="user-management" element={<UserManagement/>}/>
+        </Route>
+
+        <Route path="/api/user/*" element={<DashboardLayout   /> }>
+            <Route  element={<Outlet />}/>
+              <Route path='dashboard/groupId' element={<Dashboard />} />
+              <Route path="members" element={<Members />} />
+              
         </Route>
 
         <Route path="/api/member/allMembers" element={<Members />} />

@@ -116,7 +116,7 @@ const Members = () => {
   return (
     <>
 
-    <Box ml={6}>
+    <Box mr={2}>
         <Header title="All Members" subtitle="A List of all Members"/>
         <Box m="40px 0 0 0" height="75dvh" sx={{
       "& .MuiDataGrid-root": {

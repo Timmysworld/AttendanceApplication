@@ -2,12 +2,11 @@ import { useRef, useState } from 'react';
 import {useForm} from 'react-hook-form'
 import {useNavigate, NavLink} from 'react-router-dom'
 import { decodeToken, storeToken } from '../Utils/AuthUtils';
+import { useAuth } from '../Utils/AuthProvider';
 import Input from '../UI/Input';
 import Button from '../UI/Button';
 import classes from "../Components/Login.module.css"
 import AccountService from '../Services/AccountService';
-//import AuthContext from '../Utils/AuthProvider';
-import { useAuth } from '../Utils/AuthProvider';
 
 
 

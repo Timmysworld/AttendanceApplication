@@ -22,17 +22,18 @@ public class UserServices
         _roleManager = roleManager;
     }
 
-    // TOTAL NUMBER OF MEMBERS
+    // TOTAL NUMBER OF Users
         public async Task<int> TotalUserCountAsync()
         {
             return await _context.Users.CountAsync();
         }
 
-    // LIST OF ALL MEMBERS
+    // LIST OF ALL Users
         public async Task<List<User>> GetUsersAsync()
         {
             return await _context.Users.ToListAsync();
         }
+
 
         public async Task<UserProfileModel> GetUserAsync(ClaimsPrincipal userPrincipal)
         {

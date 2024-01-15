@@ -14,7 +14,7 @@ namespace TheGospelMission.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "UnitLeader , GroupLeader")] 
+// [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "UnitLeader , GroupLeader, Overseer")] 
 public class UserController : ControllerBase
 {
     private readonly GospelMissionDbContext _context;
@@ -32,6 +32,13 @@ public class UserController : ControllerBase
         _groupService = groupService;
         _logger = logger;
 
+    }
+    [HttpGet]
+    [Route("allUsers")]
+    public async Task<IActionResult> Users()
+    {
+        var users = await _userService.GetUsersAsync();
+        return Ok(users);
     }
 
     [HttpGet]
