@@ -11,6 +11,15 @@ const UserService ={
             console.error('Error in UserService:', error);
             throw error;
         }
-        },
+    },
+    user: async(userId)=>{
+        try {
+            var response = await httpSmartClient.getById(`/${baseName}/profile/${userId}`);
+            return response ? response.data : { status: 'Failed', error:['An unexpected error occurred.']};
+        } catch (error) {
+            console.error('Error in UserService: with user ', error);
+            throw error;
+        }
     }
+}
 export default UserService;

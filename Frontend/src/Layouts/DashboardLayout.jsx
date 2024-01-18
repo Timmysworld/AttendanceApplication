@@ -11,10 +11,9 @@ import { Outlet } from "react-router-dom";
 
 const DashboardLayout = () => {
   // State to management
-  const { token, userRoles } = useAuth(); 
+  const { token } = useAuth(); 
   const navigate = useNavigate();
   const [isSidebar, setIsSidebar] = useState(true);
-  console.log("layout:",userRoles)
 
   
 
@@ -35,8 +34,6 @@ const DashboardLayout = () => {
           <Sidebarr isSidebar={isSidebar} />
           <Box className={classes.content}>
             <Navbar setIsSidebar={setIsSidebar} />
-            {/* {children({ userRoles })} */}
-            {/* {typeof children === 'function' ? children({ userRoles }) : null} */}
             <Outlet/>
           </Box>
         </main>

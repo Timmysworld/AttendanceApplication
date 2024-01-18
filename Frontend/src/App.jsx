@@ -6,6 +6,7 @@ import Login from './Components/Login';
 import DashboardLayout from './Layouts/DashboardLayout';
 import Dashboard from './Pages/Dashboard';
 import Members from './Pages/Members';
+import Profile from './Pages/Profile';
 
 import { ColorModeContext, useMode } from './theme';
 import { CssBaseline, ThemeProvider } from '@mui/material';
@@ -29,11 +30,12 @@ function App() {
               <Route path='dashboard' element={<Dashboard />} />
               <Route path="members" element={<Members />} />
               <Route path="user-management" element={<UserManagement/>}/>
+              <Route path="profile/:userId" element={<Profile/>}/>
         </Route>
 
         <Route path="/api/user/*" element={<DashboardLayout   /> }>
             <Route  element={<Outlet />}/>
-              <Route path='dashboard/groupId' element={<Dashboard />} />
+              <Route path='dashboard/:groupId' element={<Dashboard />} />
               <Route path="members" element={<Members />} />
               
         </Route>

@@ -9,6 +9,7 @@ using TheGospelMission.Models;
 using TheGospelMission.Services;
 using System.Linq;
 using TheGospelMission.ViewModels;
+using System.Text.Json;
 
 namespace TheGospelMission.Controllers;
 
@@ -38,6 +39,8 @@ public class UserController : ControllerBase
     public async Task<IActionResult> Users()
     {
         var users = await _userService.GetUsersAsync();
+        // Modify the structure before returning the response
+
         return Ok(users);
     }
 
@@ -88,6 +91,47 @@ public class UserController : ControllerBase
         return Ok(new { Group = group, Members = members });
     }
 
+
+    [HttpGet]
+    [Route("profile/{userId}")]
+    //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Overseer")]
+    public async Task<IActionResult> ViewProfile(string userId)
+    {
+        try
+        {
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user == null)
+            {
+                return NotFound("User not found");
+            }
+
+            var profile = new UserProfileModel
+            {
+                Id = user.Id,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                UserName = user.UserName,
+                Gender = user.Gender,
+                IsActive = user.IsActive,
+                LastLoggedOn = user.LastLoggedOn,
+                Group = user.Group,
+                Roles = _userManager.GetRolesAsync(user).Result.ToList(),
+            };
+
+            return Ok(profile);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.ToString());
+            return StatusCode(500, "An error occurred while processing the request.");
+        }
+    }
+
+    // CURRENT USER VIEW
+    ///<summary>
+    /// current user is able to see his/her profile information
+    ///</summary>
+    ///
     [HttpGet]
     [Route("profile")]
     public async Task<IActionResult> View()

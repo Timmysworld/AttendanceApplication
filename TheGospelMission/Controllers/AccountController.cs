@@ -2,6 +2,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using TheGospelMission.Exceptions;
@@ -18,7 +19,8 @@ public class AccountController(
     IConfiguration configuration,
     NotificationService notificationService,
     ChurchServices churchService,
-    ILogger<AccountController> logger) : ControllerBase
+    ILogger<AccountController> logger,
+    SignInManager<User> signInManager ) : ControllerBase
 {
     private readonly UserManager<User> _userManager = userManager;
     private readonly RoleManager<IdentityRole> _roleManager = roleManager;
@@ -26,76 +28,75 @@ public class AccountController(
     private readonly ILogger<AccountController> _logger = logger;
     private readonly NotificationService _notificationService = notificationService;
     private readonly ChurchServices _churchService = churchService;
+    private readonly SignInManager<User> _signInManager = signInManager;
 
-
-[HttpPost]
-[Route("Register")]
-public async Task<IActionResult> Register([FromBody] RegisterModel register)
-{
-    if (!ModelState.IsValid)
+    [HttpPost]
+    [Route("Register")]
+    public async Task<IActionResult> Register([FromBody] RegisterModel register)
     {
-        // ModelState is invalid, return detailed validation errors
+        if (!ModelState.IsValid)
+        {
+            // ModelState is invalid, return detailed validation errors
+            return BadRequest(new AuthResult
+            {
+                Errors = ModelState.Values.SelectMany(v => v.Errors.Select(e => e.ErrorMessage)).ToList(),
+                Status = "Failed"
+            });
+
+        }
+
+        var userExist = await _userManager.FindByEmailAsync(register.Email);
+        if (userExist != null)
+        {
+            // User already exists, throw exception
+            throw new UserExistsException(userExist.UserName, userExist.Email)
+            {
+                ExistingUsername = userExist.UserName,
+                ExistingUserEmail = userExist.Email
+            };
+        }
+
+        // Check if the password and confirm password match
+        if (register.Password != register.ConfirmPassword)
+        {
+            return BadRequest("Passwords must match");
+        }
+
+        // Create user
+        var newUser = new User
+        {
+            UserName = register.Username,
+            FirstName = register.FirstName,
+            LastName = register.LastName,
+            Email = register.Email,
+            Gender = register.Gender,
+            ChurchId = register.Church
+        };
+
+        var creationResult = await _userManager.CreateAsync(newUser, register.Password);
+
+        if (creationResult.Succeeded)
+        {
+            return Ok(new AuthResult
+            {
+                Status = "Success",
+                Message = "User created successfully!"
+            });
+        }
+
+        // Log the details of the failure
+        _logger.LogError($"User registration failed: {string.Join(", ", creationResult.Errors)}");
+
         return BadRequest(new AuthResult
         {
-            Errors = ModelState.Values.SelectMany(v => v.Errors.Select(e => e.ErrorMessage)).ToList(),
+            Errors = creationResult.Errors.Select(error => error.Description).ToList(),
             Status = "Failed"
         });
-
     }
-
-    var userExist = await _userManager.FindByEmailAsync(register.Email);
-    if (userExist != null)
-    {
-        // User already exists, throw exception
-        throw new UserExistsException(userExist.UserName, userExist.Email)
-        {
-            ExistingUsername = userExist.UserName,
-            ExistingUserEmail = userExist.Email
-        };
-    }
-
-    // Check if the password and confirm password match
-    if (register.Password != register.ConfirmPassword)
-    {
-        return BadRequest("Passwords must match");
-    }
-
-    // Create user
-    var newUser = new User
-    {
-        UserName = register.Username,
-        FirstName = register.FirstName,
-        LastName = register.LastName,
-        Email = register.Email,
-        Gender = register.Gender,
-        ChurchId = register.Church
-    };
-
-    var creationResult = await _userManager.CreateAsync(newUser, register.Password);
-
-    if (creationResult.Succeeded)
-    {
-        return Ok(new AuthResult
-        {
-            Status = "Success",
-            Message = "User created successfully!"
-        });
-    }
-
-    // Log the details of the failure
-    _logger.LogError($"User registration failed: {string.Join(", ", creationResult.Errors)}");
-
-    return BadRequest(new AuthResult
-    {
-        Errors = creationResult.Errors.Select(error => error.Description).ToList(),
-        Status = "Failed"
-    });
-}
 
 
 
     //TODO: NEED TO SET UP REDIRECT TO SUCCESSFUL REGISTER PAGE.
-    //TODO: NEED TO MAKE A LOG OUT ROUTE
 
     [HttpPost]
     [Route("Login")]
@@ -161,6 +162,37 @@ public async Task<IActionResult> Register([FromBody] RegisterModel register)
         }
         return BadRequest();
     }
+
+    [HttpPost]
+    [Route("Logout")]
+    [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+    public async Task<IActionResult> Logout()
+    {
+        try
+        {
+            _logger.LogInformation("Before calling SignOutAsync");
+
+            if (_signInManager != null)
+            {
+                await _signInManager.SignOutAsync();
+                _logger.LogInformation("SignOutAsync called successfully");
+                // ... rest of the code
+                return Ok();
+            }
+            else
+            {
+                _logger.LogError("_signInManager is null");
+                // Log or handle the case where _signInManager is null
+                return StatusCode(500, "Internal Server Error");
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error during logout");
+            return StatusCode(500, "Internal Server Error");
+        }
+    }
+
 
     [HttpPost]
     [Route("Forgot-Password")]

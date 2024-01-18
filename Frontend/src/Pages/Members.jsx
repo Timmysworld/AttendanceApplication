@@ -142,8 +142,8 @@ const Members = () => {
       "& .MuiCheckbox-root": {
         color: `${colors.accentGreen[200]} !important`,
       },
-      "&.MuiDataGrid-toolbarContainer":{
-        backgroundColor: colors.primary[400],
+      "& .MuiButtonBase-root":{
+        color: colors.grey[200],
       },
     }} >
         <DataGrid checkboxSelection rows={mockDataTeam} columns={columns} components={{ Toolbar: GridToolbar }}/>

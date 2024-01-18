@@ -19,6 +19,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers()
     .AddJsonOptions(options => 
     {
+        options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
         options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve;
     });
 builder.Services.AddScoped<GroupServices>(); // Use the appropriate scope (e.g., Scoped, Transient, or Singleton) as per your application's requirements
@@ -27,6 +28,7 @@ builder.Services.AddScoped<UserServices>();
 builder.Services.AddScoped<NotificationService>();
 builder.Services.AddScoped<ChurchServices>();
 builder.Services.AddScoped<AttendanceServices>();
+
 
 
 
@@ -90,6 +92,7 @@ builder.Services.AddIdentity<User, IdentityRole>(options => options.SignIn.Requi
     .AddDefaultTokenProviders()
     .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<GospelMissionDbContext>()
+    .AddSignInManager<SignInManager<User>>()
     .AddClaimsPrincipalFactory<UserClaimsPrincipalFactory<User, IdentityRole>>();
 
     

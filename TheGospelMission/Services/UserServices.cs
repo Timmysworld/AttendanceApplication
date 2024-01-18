@@ -7,6 +7,7 @@ using TheGospelMission.Data;
 using TheGospelMission.Models;
 using TheGospelMission.ViewModels;
 
+
 namespace TheGospelMission.Services;
 public class UserServices
 {
@@ -14,12 +15,14 @@ public class UserServices
     private readonly ILogger<UserServices> _logger;
     private readonly UserManager<User> _userManager;
     private readonly RoleManager<IdentityRole> _roleManager;
-    public UserServices(GospelMissionDbContext context, ILogger<UserServices> logger, UserManager<User> user, RoleManager<IdentityRole> roleManager)
+    private readonly GroupServices _groupServices;
+    public UserServices(GospelMissionDbContext context, ILogger<UserServices> logger, UserManager<User> user, GroupServices groupServices, RoleManager<IdentityRole> roleManager)
     {
         _context = context ?? throw new ArgumentNullException(nameof(context));
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         _userManager = user ?? throw new ArgumentNullException(nameof(user));
         _roleManager = roleManager;
+        _groupServices = groupServices;
     }
 
     // TOTAL NUMBER OF Users
@@ -29,10 +32,29 @@ public class UserServices
         }
 
     // LIST OF ALL Users
-        public async Task<List<User>> GetUsersAsync()
+        public async Task<List<UserProfileModel>> GetUsersAsync()
         {
-            return await _context.Users.ToListAsync();
+            var users = await _context.Users
+                .Include(u => u.Group) // Ensure Group is included in the query
+                .ToListAsync();
+
+            var simplifiedUsers = users.Select(user => new UserProfileModel
+            {
+                Id = user.Id,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                UserName = user.UserName,
+                Gender = user.Gender,
+                IsActive = user.IsActive,
+                LastLoggedOn = user.LastLoggedOn,
+                Group = user.Group,
+                Roles = _userManager.GetRolesAsync(user).Result.ToList(), // You need to implement this method
+                // ... other relevant properties
+            }).ToList();
+
+            return simplifiedUsers;
         }
+
 
 
         public async Task<UserProfileModel> GetUserAsync(ClaimsPrincipal userPrincipal)
@@ -136,7 +158,7 @@ public class UserServices
         }
         //TODO: I NEED A CASE TO WHERE IF YOU CHANGE THE ROLE OF A USER THE PREVIOUS BOOLEAN(ISROLE) IS REMOVE
 
-    //ASSIGN USERS A Role
+        //ASSIGN USERS A Role
         private async Task AssignRole(User user, string roleName)
         {
             // Log or debug statement to confirm method execution
@@ -148,6 +170,11 @@ public class UserServices
             }
 
             await _userManager.AddToRoleAsync(user, roleName);
+        }
+
+        private string GetGroupName(Group? group)
+        {
+            return group?.GroupName;
         }
 
 

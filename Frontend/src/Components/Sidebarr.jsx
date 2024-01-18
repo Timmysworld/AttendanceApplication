@@ -119,14 +119,14 @@ const Sidebarr = () => {
               >
               User Management
             </MenuItem>
-            <MenuItem
+            {/* <MenuItem
               component={<NavLink to="profile"/>}
               icon={<PersonOutlinedIcon />}
               selected={selected}
               onClick={() => handleMenuItemClick("Profile")}
               >
                 Profile
-              </MenuItem>
+              </MenuItem> */}
               <MenuItem
               component={<NavLink to="members"/>}
               icon={<PersonOutlinedIcon />}

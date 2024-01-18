@@ -1,5 +1,5 @@
-import {Box, IconButton, useTheme} from "@mui/material";
-import { useContext } from "react";
+import {Box, IconButton, useTheme, Menu, MenuItem,} from "@mui/material";
+import { useContext,useState } from "react";
 import { ColorModeContext, tokens } from "../theme";
 import { InputBase } from '@mui/material';
 import LightModeOutlinedIcon from "@mui/icons-material/LightModeOutlined";
@@ -8,12 +8,29 @@ import NotificationsOutlinedIcon from '@mui/icons-material/NotificationsOutlined
 import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined';
 import PersonOutlinedIcon from '@mui/icons-material/PersonOutlined';
 import SearchIcon from "@mui/icons-material/Search"
+import AccountService from "../Services/AccountService";
+import { useNavigate } from "react-router-dom";
+import { clearToken } from "../Utils/AuthUtils";
 
 const Navbar = () => {
   const theme =useTheme();
   const colors =tokens(theme.palette.mode);
   const colorMode = useContext(ColorModeContext);
+  const [anchorEl, setAnchorEl] = useState(null);
+  const Navigate = useNavigate();
+  
+  const handleClick = (event)=>{
+    setAnchorEl(event.currentTarget);
+  };
 
+  const handleClose = async () =>{
+    setAnchorEl(null);
+  }
+  const handleLogout = async() =>{
+    await AccountService.logout();
+    clearToken();
+    Navigate("/");
+  }
   return (
     <Box display="flex" justifyContent="space-between" p={2} >
       {/* SEARCH BAR  */}
@@ -38,9 +55,18 @@ const Navbar = () => {
         <IconButton>
           <SettingsOutlinedIcon/>
         </IconButton>
-        <IconButton>
+        <IconButton onClick={handleClick}>
           <PersonOutlinedIcon/>
         </IconButton>
+        <Menu
+          anchorEl={anchorEl}
+          open={Boolean(anchorEl)}
+          onClose={handleClose}
+        >
+          <MenuItem onClick={handleLogout}>Logout</MenuItem>
+          <MenuItem onClick={handleClose}>Profile</MenuItem>
+          {/* Add more menu items as needed */}
+        </Menu>
       </Box>
     </Box>
   )

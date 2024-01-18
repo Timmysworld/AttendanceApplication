@@ -20,6 +20,15 @@ const AccountService = {
             console.error('Error in login:', error);
             throw error;
         }
+    },    
+    logout: async (credentials)=>{
+        try{
+            var response = await httpSmartClient.post(`/${baseName}/logout`, credentials);
+            return response ? response.data : {status: 'Failed', errors:['An unexpected error occurred.']};
+        }catch (error){
+            console.error('Error in logout:', error);
+            throw error;
+        }
     }
 }
 export default AccountService;
