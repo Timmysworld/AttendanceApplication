@@ -1,9 +1,24 @@
 import axios from 'axios';
+import { retrieveToken } from '../Utils/AuthUtils';
 
 const baseURL = 'http://localhost:5180/api';
 const httpClient = axios.create({
     baseURL: 'http://localhost:5180/api/'
 });
+
+// Add an interceptor to include the Authorization header in all requests
+httpClient.interceptors.request.use(
+    (config) => {
+        const token = retrieveToken('token'); // Replace with your token retrieval logic
+        if (token) {
+            config.headers.Authorization = `Bearer ${token}`;
+        }
+        return config;
+    },
+    (error) => {
+        return Promise.reject(error);
+    }
+);
 
 const handleApiResponse = function (httpResponse){
     if (httpResponse.status >= 200 && httpResponse.status < 300) {

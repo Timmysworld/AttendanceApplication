@@ -95,7 +95,7 @@ const Create = () => {
                             value={values.group}
                             name="group"
                             error={!!touched.group && !!errors.group}
-                            FormHelperText={touched.group && errors.group}
+                            helperText={touched.group && errors.group}
                             displayEmpty
                             >
                             {/* Add your options as MenuItem components */}
