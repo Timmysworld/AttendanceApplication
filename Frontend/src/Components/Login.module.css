@@ -1,0 +1,80 @@
+
+form {
+    width: 90%;
+    max-width: 40rem;
+    margin: 3rem auto;
+    padding: 2rem;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 0 16px 1px rgba(0, 0, 0, 0.5);
+  }
+
+  .heading{
+    font-family: "Oswald";
+    font-size: 1.5rem;
+    color: black;
+    text-align: center;
+    margin-bottom: 20px;
+
+}
+.register{
+  color: black;
+  font-size: 1rem!important;
+  margin-top:-25px
+}
+
+.control,
+fieldset {
+  margin-bottom: 1rem;
+}
+
+.control.no-margin {
+  margin-bottom: 0;
+}
+
+.control label {
+  display: block;
+  font-size: 0.8rem;
+  margin-bottom: 0.2rem;
+  color: #0000;
+  text-transform: uppercase;
+  font-weight: bold;
+  font-family: Merriweather;
+}
+
+
+/* .control input {
+    display: block;
+    width: 100%;
+    max-width: 15rem;
+    padding: 0.5rem;
+    font-size: 1rem;
+    border-radius: 4px;
+    border: 1px solid #758a8a;
+    background-color: #869999;
+    color: 0000;
+  } */
+
+  .control-error {
+    color: #cf0303;
+    font-size: 0.8rem;
+    height: 2rem;
+    padding: 0.5rem 0;
+  }
+
+  .control-error p {
+    margin: 0;
+  }
+  
+  .control-row {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    gap: 1rem;
+  }
+  
+  .form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+  }

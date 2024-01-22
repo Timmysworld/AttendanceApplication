@@ -9,5 +9,9 @@ namespace TheGospelMission.Models
         public string? Status {get; set;}
         public string? Message {get;set;}
 
+        public string? ExistingUsername { get; set; }
+        
+        public string? ExistingUserEmail { get; set; }
+
     }
 }
