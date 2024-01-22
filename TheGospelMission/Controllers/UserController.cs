@@ -15,7 +15,7 @@ namespace TheGospelMission.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-// [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "UnitLeader , GroupLeader, Overseer")] 
+[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "UnitLeader , GroupLeader, Overseer")] 
 public class UserController : ControllerBase
 {
     private readonly GospelMissionDbContext _context;

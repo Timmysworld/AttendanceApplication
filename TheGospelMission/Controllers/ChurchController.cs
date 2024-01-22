@@ -37,63 +37,62 @@ public class ChurchController : ControllerBase
     /// Gets the LIST of ALL MEMBERS stored in DATABASE
     ///</summary>
     ///
-
-[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Overseer")] 
-[HttpGet]
-[Route("allMembers")]
-public async Task<IActionResult> GetAllMembers()
-{
-
-    // Inspect HttpContext.User for debugging
-    var user = HttpContext.User;
-    var token = HttpContext.Request.Headers["Authorization"].FirstOrDefault()?.Split(" ").Last();
-    _logger.LogInformation($"Received token: {token}");
-
-    if (user != null)
-
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Overseer")]
+    [HttpGet]
+    [Route("allMembers")]
+    public async Task<IActionResult> GetAllMembers()
     {
-        _logger.LogInformation($"User Information - Name: {user.Identity.Name}, IsAuthenticated: {user.Identity.IsAuthenticated}");
 
-        // Log all claims for debugging
-        foreach (var claim in user.Claims)
+        // Inspect HttpContext.User for debugging
+        var user = HttpContext.User;
+        var token = HttpContext.Request.Headers["Authorization"].FirstOrDefault()?.Split(" ").Last();
+        _logger.LogInformation($"Received token: {token}");
+
+        if (user != null)
+
         {
-            _logger.LogInformation($"Claim Type: {claim.Type}, Claim Value: {claim.Value}");
+            _logger.LogInformation($"User Information - Name: {user.Identity.Name}, IsAuthenticated: {user.Identity.IsAuthenticated}");
+
+            // Log all claims for debugging
+            foreach (var claim in user.Claims)
+            {
+                _logger.LogInformation($"Claim Type: {claim.Type}, Claim Value: {claim.Value}");
+            }
+
+            // Check if ChurchId claim exists and is not null or empty
+            var churchIdClaim = user.FindFirst("ChurchId");
+            if (churchIdClaim == null || string.IsNullOrEmpty(churchIdClaim.Value))
+            {
+                // Log the issue for debugging
+                _logger.LogError("Invalid or missing ChurchId claim. User: {UserName}");
+
+                // Handle the case where ChurchId is null or empty
+                // You might want to return an error or handle this case as needed
+                return BadRequest(new { message = "Invalid or missing ChurchId claim." });
+            }
+
+            // Use the extracted ChurchId directly in your service method
+            var currentUserChurchId = churchIdClaim.Value;
+
+            try
+            {
+                // Now you can use currentUserChurchId in your service method
+                var members = await _memberService.GetMembersAsync(currentUserChurchId);
+
+                return Ok(members);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error retrieving members for ChurchId {ChurchId}. User: {UserName}", currentUserChurchId, user.Identity.Name);
+                return StatusCode(500, "Internal Server Error");
+            }
         }
-
-        // Check if ChurchId claim exists and is not null or empty
-        var churchIdClaim = user.FindFirst("ChurchId");
-        if (churchIdClaim == null || string.IsNullOrEmpty(churchIdClaim.Value))
+        else
         {
-            // Log the issue for debugging
-            _logger.LogError("Invalid or missing ChurchId claim. User: {UserName}");
-
-            // Handle the case where ChurchId is null or empty
-            // You might want to return an error or handle this case as needed
-            return BadRequest(new { message = "Invalid or missing ChurchId claim." });
-        }
-
-        // Use the extracted ChurchId directly in your service method
-        var currentUserChurchId = churchIdClaim.Value;
-
-        try
-        {
-            // Now you can use currentUserChurchId in your service method
-            var members = await _memberService.GetMembersAsync(currentUserChurchId);
-
-            return Ok(members);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error retrieving members for ChurchId {ChurchId}. User: {UserName}", currentUserChurchId, user.Identity.Name);
-            return StatusCode(500, "Internal Server Error");
+            // Log an error or handle the case where the user object is null
+            _logger.LogError("HttpContext.User is null.");
+            return BadRequest(new { message = "Invalid or missing user information." });
         }
     }
-    else
-    {
-        // Log an error or handle the case where the user object is null
-        _logger.LogError("HttpContext.User is null.");
-        return BadRequest(new { message = "Invalid or missing user information." });
-    }
-}
 
 }
