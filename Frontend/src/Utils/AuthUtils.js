@@ -52,9 +52,13 @@ if (token) {
 }
 return [];
 };
-// export const getUserRoles = () => {
-//     const { userRoles } = AuthContext._currentValue.auth;
-//     return userRoles;
-// };
+export const getChurchId = () => {
+    const token = retrieveToken();
+    if(token) {
+        const decodedToken = decodeToken(token);
+        return decodedToken ? decodedToken.ChurchId || [] : [];
+    }
+    return [];
+};
 
 
