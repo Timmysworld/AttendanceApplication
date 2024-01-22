@@ -1,3 +1,5 @@
+
+using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -11,6 +13,7 @@ namespace TheGospelMission.Controllers;
 [Route("api/[controller]")]
 public class ChurchController : ControllerBase
 {
+
     private readonly ILogger<ChurchController> _logger;
     private readonly ChurchServices _churchService;
     private readonly MemberServices _memberService;
@@ -32,11 +35,13 @@ public class ChurchController : ControllerBase
         var churchNames = _churchService.GetChurchesAsync(); 
         return Ok(churchNames);
     }
+
     //READ/UPDATE MEMBER 
     ///<summary>
     /// Gets the LIST of ALL MEMBERS stored in DATABASE
     ///</summary>
     ///
+
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Overseer")]
     [HttpGet]
     [Route("allMembers")]

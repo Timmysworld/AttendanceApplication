@@ -22,3 +22,7 @@ internal class MemberExistException : MemberException
             ExistingMemberLastName = existingMemberLastName;
         }
 }
+
+
+
+
