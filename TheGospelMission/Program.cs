@@ -95,7 +95,6 @@ builder.Services.AddIdentity<User, IdentityRole>(options => options.SignIn.Requi
     .AddSignInManager<SignInManager<User>>()
     .AddClaimsPrincipalFactory<UserClaimsPrincipalFactory<User, IdentityRole>>();
 
-    
 builder.Services.Configure<IdentityOptions>(options =>
 {
     // Default User settings.
@@ -109,7 +108,7 @@ builder.Services.AddCors(options =>
     {
         options.AddDefaultPolicy(builder =>
         {
-            builder.AllowAnyOrigin()
+            builder.WithOrigins("http://localhost:5173")
                    .AllowAnyMethod()
                    .AllowAnyHeader();
         });
@@ -196,7 +195,7 @@ using (var scope = app.Services.CreateScope())
     string username = "TimmyTurner";
     string firstName = "Timothy";
     string lastName = "Singleton";
-    string email = "superadmin@admin.com";
+    string email = "overseer@cog.com";
     string gender = "male";
     string password = "Password1!";
     int churchId = 1;

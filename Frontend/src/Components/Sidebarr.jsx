@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Sidebar, Menu, MenuItem } from "react-pro-sidebar";
+import { Sidebar, Menu, MenuItem, SubMenu } from "react-pro-sidebar";
 // import 'react-pro-sidebar/dist/styles/styles.css';
 import{Box, IconButton,Typography, useTheme} from "@mui/material";
 import { NavLink } from "react-router-dom";
@@ -39,12 +39,14 @@ const Sidebarr = () => {
         padding:"5px 35px 5px 20px !important"
       }, 
       "& .ps-inner-item:hover":{
-        color:"868dfb !important"
+        color:"transparent !important"
       },
       "& .ps-menu-item.active":{
-        color:"6870fa !important"
-      }
-    
+        color:"transparent !important"
+      }, 
+      "& .ps-submenu-content":{
+        backgroundColor: "inherit"
+      },
     }}>
       <Sidebar collapsed={isCollapsed}>
         <Menu iconShape="square">
@@ -119,22 +121,33 @@ const Sidebarr = () => {
               >
               User Management
             </MenuItem>
-            {/* <MenuItem
-              component={<NavLink to="profile"/>}
-              icon={<PersonOutlinedIcon />}
-              selected={selected}
-              onClick={() => handleMenuItemClick("Profile")}
-              >
-                Profile
-              </MenuItem> */}
-              <MenuItem
+            <SubMenu title="Members" label="Members" icon={<PersonOutlinedIcon />}>
+                <MenuItem
+                  component={<NavLink to="members" />}
+                  selected={selected}
+                  onClick={() => handleMenuItemClick("Members")}
+                >
+                  All Members
+                </MenuItem>
+                <MenuItem
+                  component={<NavLink to="members/create" />}
+                  selected={selected}
+                  onClick={() => handleMenuItemClick("Create Member")}
+                >
+                  Create
+                </MenuItem>
+                {/* Add more MenuItem components as needed */}
+              {/* Add more SubMenu components as needed */}
+            </SubMenu>
+
+              {/* <MenuItem
               component={<NavLink to="members"/>}
               icon={<PersonOutlinedIcon />}
               selected={selected}
               onClick={() => handleMenuItemClick("Members")}
               >
                 Members
-              </MenuItem>
+              </MenuItem> */}
               <MenuItem
               component={<NavLink to="attendance"/>}
               icon={<InventoryOutlinedIcon />}

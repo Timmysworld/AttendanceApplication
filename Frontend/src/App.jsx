@@ -5,12 +5,13 @@ import Register from './Components/Register';
 import Login from './Components/Login';
 import DashboardLayout from './Layouts/DashboardLayout';
 import Dashboard from './Pages/Dashboard';
-import Members from './Pages/Members';
+import Members from './Pages/Members/Members';
 import Profile from './Pages/Profile';
 
 import { ColorModeContext, useMode } from './theme';
 import { CssBaseline, ThemeProvider } from '@mui/material';
 import UserManagement from './Pages/UserManagement';
+import Create from './Pages/Members/Create';
 
 function App() {
   const [theme, colorMode] = useMode();
@@ -29,6 +30,7 @@ function App() {
             <Route  element={<Outlet />}/>
               <Route path='dashboard' element={<Dashboard />} />
               <Route path="members" element={<Members />} />
+                <Route path="members/create" element={<Create/>}/>
               <Route path="user-management" element={<UserManagement/>}/>
               <Route path="profile/:userId" element={<Profile/>}/>
         </Route>
@@ -37,12 +39,8 @@ function App() {
             <Route  element={<Outlet />}/>
               <Route path='dashboard/:groupId' element={<Dashboard />} />
               <Route path="members" element={<Members />} />
-              
         </Route>
-
-        <Route path="/api/member/allMembers" element={<Members />} />
       </Routes>
-
     </ThemeProvider>
     </ColorModeContext.Provider>
   )

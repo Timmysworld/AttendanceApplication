@@ -55,8 +55,6 @@ public class UserServices
             return simplifiedUsers;
         }
 
-
-
         public async Task<UserProfileModel> GetUserAsync(ClaimsPrincipal userPrincipal)
         {
             var userId = _userManager.GetUserId(userPrincipal);

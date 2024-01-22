@@ -1,6 +1,7 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI;
 using Microsoft.AspNetCore.Mvc;
@@ -19,6 +20,7 @@ public class AccountController(
     IConfiguration configuration,
     NotificationService notificationService,
     ChurchServices churchService,
+    UserServices userService,
     ILogger<AccountController> logger,
     SignInManager<User> signInManager ) : ControllerBase
 {
@@ -29,6 +31,7 @@ public class AccountController(
     private readonly NotificationService _notificationService = notificationService;
     private readonly ChurchServices _churchService = churchService;
     private readonly SignInManager<User> _signInManager = signInManager;
+    private readonly UserServices _userService = userService;
 
     [HttpPost]
     [Route("Register")]
@@ -97,20 +100,14 @@ public class AccountController(
 
 
     //TODO: NEED TO SET UP REDIRECT TO SUCCESSFUL REGISTER PAGE.
-
     [HttpPost]
     [Route("Login")]
     public async Task<IActionResult> Login([FromBody]LoginModel login)
     {
-        try
+        if(ModelState.IsValid)
         {
-            if(ModelState.IsValid)
-            {
-                //check if user exist
-                var existing_user = await _userManager.FindByNameAsync(login.UserName);
-
-                // User not found, return a BadRequest response with an error message
-                if(existing_user == null)
+            var existing_user = await _userManager.FindByNameAsync(login.UserName);
+            if(existing_user == null)
                     return BadRequest(new AuthResult()
                         {
                             Status = "Failed",
@@ -121,44 +118,41 @@ public class AccountController(
                                 "User doesn't exist"
                             }
                         });
-                
-                // Check if the provided password is correct
-                var isCorrect = await _userManager.CheckPasswordAsync(existing_user, login.Password);
-
-                if(!isCorrect)
-                    // Incorrect password, return a BadRequest response with an error message
-                    return BadRequest(new AuthResult()
-                    {
-                        Status = "Failed",
-                        Result = false,
-                        Errors = new List<string>()
-                            {
-                                "Invalid Credentials"
-                            }
-                    });
-
-                
-                // Password is correct, update LastLoggedIn and generate a JWT token
-                existing_user.LastLoggedOn = DateTime.UtcNow;
-                await _userManager.UpdateAsync(existing_user);
-                
-                var jwtToken = GenerateJwtToken(existing_user);
-
-                // Return a successful response with the JWT token
-                return Ok(new AuthResult()
+            var result = await _userManager.CheckPasswordAsync(existing_user, login.Password);
+            if (result)
                 {
-                    Token = jwtToken,
-                    Result = true,
-                    Status = "Success",
-                    Message ="Login was Successful;"
-                });
-            }
+                    existing_user.LastLoggedOn = DateTime.UtcNow;
+                    await _userManager.UpdateAsync(existing_user);
+
+                    // Log the successful login with ChurchId
+                    _logger.LogInformation("User {UserName} successfully logged in with ChurchId {ChurchId}.", existing_user.UserName, existing_user.ChurchId);
+
+                    var jwtToken = GenerateJwtToken(existing_user);
+
+                    // Return a successful response with the JWT token
+                    return Ok(new AuthResult()
+                    {
+                        Token = jwtToken,
+                        Result = true,
+                        Status = "Success",
+                        Message ="Login was Successful;"
+                    });
+                    
+                }
         }
-        catch(Exception ex)
+        else
         {
-            // Log unexpected exceptions
-            _logger.LogError($"An unexpected error occurred during user login: {ex}");
-            return StatusCode(StatusCodes.Status500InternalServerError, "An unexpected error occurred.");
+            ModelState.AddModelError(string.Empty, "Invalid login attempt.");
+            return BadRequest(new AuthResult()
+            {
+                Status = "Failed",
+                            Result = false,
+                            Message = "Login was unsuccessful",
+                            Errors = new List<string>()
+                            {
+                                "Invalid Login Attempt"
+                            }
+            });
         }
         return BadRequest();
     }
@@ -217,6 +211,7 @@ public class AccountController(
                 new Claim(ClaimTypes.NameIdentifier, user.Id),
                 new Claim(ClaimTypes.Name, user.UserName),
                 new Claim(ClaimTypes.Email, user.Email),
+                new Claim("ChurchId", user.ChurchId.ToString()),
                 // new Claim("GroupId", user.GroupId?.ToString() ?? string.Empty),
 
                 // Add other claims as needed
@@ -270,4 +265,7 @@ public class AccountController(
         
         return roleClaims;
     }
+
+
+
 }

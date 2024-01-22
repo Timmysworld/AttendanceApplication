@@ -1,28 +1,41 @@
-import { Box, Container,Typography,useTheme } from "@mui/material"
+import { Box,Typography,useTheme } from "@mui/material"
 import { tokens } from "../theme";
+import ProgressCircle from "./ProgressCircle";
 
-const Snapshot = () => {
+const Snapshot = ({title, subtitle, icon, progress, increase}) => {
     const theme = useTheme();
     const colors = tokens(theme.palette.mode);
   return (
-    <Container sx={{height:"25%", display:"flex" ,justifyContent:"center", gap:"10%"}}>
-    <Box 
-      width= "25%"
-      height= "60%"
-      backgroundColor={colors.accentRed[900]}
-      >  
-      <Typography color={colors.grey[100]} sx={{ ml: "5px" }}>
-            box1 
-      </Typography></Box>
-    <Box  width= "25%" height= "60%" backgroundColor={colors.accentRed[900]}>
-      <Typography color={colors.grey[100]} sx={{ ml: "5px" }}>
-            box2 
-        </Typography></Box>
-    <Box  width= "25%" height= "60%" backgroundColor={colors.accentRed[900]}>
-      <Typography color={colors.grey[100]} sx={{ ml: "5px" }}>
-            box3
-      </Typography></Box>
-  </Container>
+    <Box width="100%" m="0 30px">
+      <Box display="flex" justifyContent="space-between">
+        <Box>
+          {icon}
+          <Typography 
+            variant="h4" 
+            fontWeight="bold" 
+            sx={{color: colors.grey[100]}}
+            >
+            {title}
+          </Typography>
+        </Box>
+      </Box>
+        <Box>
+          <ProgressCircle progress={progress}/>
+        </Box>
+
+        <Box display="flex" justifyContent="space-between" mt="2px">
+        <Typography variant="h5"  sx={{color: colors.accentGreen[500]}}>
+          {subtitle}
+          </Typography>
+          <Typography 
+            variant="h5" 
+            fontStyle="italic" 
+            sx={{color: colors.accentGreen[600]}}
+            >
+          {increase}
+          </Typography>
+        </Box>
+    </Box>
   )
 }
 

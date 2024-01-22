@@ -1,18 +1,12 @@
 import {Box, Button, TextField, FormControl, MenuItem} from "@mui/material";
-import Select from "@mui/material/Select";
 import {Formik} from "formik";
 import * as yup from "yup";
 import useMediaQuery from '@mui/material/useMediaQuery';
-import { useParams } from "react-router-dom";
-import { useEffect } from "react";
-import Header from "../Components/Header"
+import Header from "../../Components/Header";
+import Select from "@mui/material/Select";
 
-const Profile = () => {
-    const params = useParams();
-    console.log(params);
 
-    const { userId } = useParams();
-
+const Create = () => {
     const isNonMobile = useMediaQuery("(min-width:600px)")
     const handleFormSubmit = (values) =>{
         console.log(values);
@@ -33,18 +27,10 @@ const Profile = () => {
         church: yup.string().required("required"),
         isActive: yup.string().required("required"),
     })
-
-    useEffect(() => {
-        console.log('Profile component is rendering.');
-        console.log('userId:', userId);
-        // Add more logs or debugging statements as needed
-      }, [userId]);
-
-  return (
+    return (
     <>
-    <Box>
-        <Header
-          title={`Profile - ${userId}`}/>
+        <Box>
+            <Header title="Create New Member" />
         <Formik 
             onSubmit={handleFormSubmit}
             initialValues={initialValues}
@@ -147,10 +133,10 @@ const Profile = () => {
                         </Box>
                     </form>
                 )}
-        </Formik>  
+        </Formik>
     </Box>
     </>
   )
 }
 
-export default Profile
+export default Create

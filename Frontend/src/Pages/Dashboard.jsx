@@ -1,11 +1,14 @@
 
-import { Box} from '@mui/material';
-import Header from '../Components/Header';
+import {Box, useTheme} from '@mui/material';
 import { useAuth } from '../Utils/AuthProvider';
+import { tokens } from "../theme";
+import Header from '../Components/Header';
 import Snapshot from '../Components/Snapshot';
 
 
 const Dashboard = () => {
+  const theme = useTheme();
+  const colors = tokens(theme.palette.mode);
   const { userRoles } = useAuth();
 
   return (
@@ -17,7 +20,68 @@ const Dashboard = () => {
             subtitle="Welcome to your dashboard"
             />
         </Box>
-        <Snapshot/>
+        <Box display="grid"
+          gridTemplateColumns="repeat(12,1fr)"
+          gridAutoRows="135px"
+          gap="10px"
+          >
+          <Box 
+            gridColumn="span 3" 
+            backgroundColor={colors.primary[400]} 
+            display="flex" 
+            alignItems="center" 
+            justifyContent="center"
+          >
+            <Snapshot 
+              title="100"
+              subtitle="Total Members"
+              progress="0.75"
+              increase= "+14%"
+              />
+          </Box>
+          <Box 
+            gridColumn="span 3" 
+            backgroundColor={colors.primary[400]} 
+            display="flex" 
+            alignItems="center" 
+            justifyContent="center"
+          >
+            <Snapshot 
+              title="100"
+              subtitle="Total Members"
+              progress="0.75"
+              increase= "+14%"
+              />
+          </Box>
+          <Box 
+            gridColumn="span 3" 
+            backgroundColor={colors.primary[400]} 
+            display="flex" 
+            alignItems="center" 
+            justifyContent="center"
+          >
+            <Snapshot 
+              title="100"
+              subtitle="Total Members"
+              progress="0.75"
+              increase= "+14%"
+              />
+          </Box>
+          <Box 
+            gridColumn="span 3" 
+            backgroundColor={colors.primary[400]} 
+            display="flex" 
+            alignItems="center" 
+            justifyContent="center"
+          >
+            <Snapshot 
+              title="100"
+              subtitle="Total Members"
+              progress="0.75"
+              increase= "+14%"
+              />
+          </Box>
+          </Box>
         </>
   );
 };

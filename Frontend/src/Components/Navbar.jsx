@@ -11,6 +11,7 @@ import SearchIcon from "@mui/icons-material/Search"
 import AccountService from "../Services/AccountService";
 import { useNavigate } from "react-router-dom";
 import { clearToken } from "../Utils/AuthUtils";
+import UserService from "../Services/UserService";
 
 const Navbar = () => {
   const theme =useTheme();
@@ -24,7 +25,9 @@ const Navbar = () => {
   };
 
   const handleClose = async () =>{
-    setAnchorEl(null);
+    await UserService.user();
+    //Navigate("profile/{userId}")
+    // setAnchorEl(null);
   }
   const handleLogout = async() =>{
     await AccountService.logout();

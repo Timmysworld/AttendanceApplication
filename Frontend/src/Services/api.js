@@ -58,6 +58,7 @@ const api = (axios) => {
                 var response = await axios.get(baseUrl + url, config);
                 return handleApiResponse(response);
             } catch (e) {
+                console.error('HTTP Error:', e); 
                 return handleExceptionApiResponse(e);
             }
         },

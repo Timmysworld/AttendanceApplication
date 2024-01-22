@@ -104,7 +104,10 @@ body {
 .selectComponent{
     color: black;
 }
-
+.createMember-form{
+    max-width: none !important;
+    background-color: inherit;
+}
 
 /* RESPONSIVE DESIGN */
 /* Media query for small screens (320px to 425px) */
