@@ -37,8 +37,6 @@ public class MemberController : ControllerBase
         {
             var member = new Member();
             var group =  _groupService.GetGroups();
-
-            //var viewModel = new 
             
             return Ok();
         }
@@ -62,18 +60,6 @@ public class MemberController : ControllerBase
             return BadRequest(ModelState);
         }
 
-        //READ/UPDATE MEMBER 
-        ///<summary>
-        /// Gets the LIST of ALL MEMBERS stored in DATABASE
-        ///</summary>
-        ///
-        [HttpGet]
-        [Route("allMembers")]
-        public async Task<IActionResult> View()
-        {
-            var members = await _memberService.GetMembersAsync();
-            return Ok(members);
-        }
 
         ///<summary>
         /// Gets a SPECIFIC MEMBER based on ID

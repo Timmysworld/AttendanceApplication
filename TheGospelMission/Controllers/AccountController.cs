@@ -1,9 +1,12 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
+using TheGospelMission.Exceptions;
 using TheGospelMission.Models;
 using TheGospelMission.Services;
 
@@ -16,103 +19,95 @@ public class AccountController(
     RoleManager<IdentityRole> roleManager,
     IConfiguration configuration,
     NotificationService notificationService,
-    ILogger<AccountController> logger) : ControllerBase
+    ChurchServices churchService,
+    UserServices userService,
+    ILogger<AccountController> logger,
+    SignInManager<User> signInManager ) : ControllerBase
 {
     private readonly UserManager<User> _userManager = userManager;
     private readonly RoleManager<IdentityRole> _roleManager = roleManager;
     private readonly IConfiguration _configuration = configuration;
     private readonly ILogger<AccountController> _logger = logger;
     private readonly NotificationService _notificationService = notificationService;
+    private readonly ChurchServices _churchService = churchService;
+    private readonly SignInManager<User> _signInManager = signInManager;
+    private readonly UserServices _userService = userService;
 
     [HttpPost]
     [Route("Register")]
     public async Task<IActionResult> Register([FromBody] RegisterModel register)
     {
-        try
+        if (!ModelState.IsValid)
         {
-            //validate incoming request
-            if(ModelState.IsValid)
+            // ModelState is invalid, return detailed validation errors
+            return BadRequest(new AuthResult
             {
-                //check if the email already exist
-                var user_exist = await _userManager.FindByEmailAsync(register.Email);
+                Errors = ModelState.Values.SelectMany(v => v.Errors.Select(e => e.ErrorMessage)).ToList(),
+                Status = "Failed"
+            });
 
-                if(user_exist != null)
-                {
-                    return BadRequest(new AuthResult()
-                    {
-                        Status = "Failed",
-                        Result = false,
-                        Errors = new List<string>()
-                        {
-                            "Email already exist"
-                        }
-                    });
-                }
+        }
 
-                //create user
-                var new_user = new User()
-                {
-                    
-                    UserName = register.Username,
-                    FirstName = register.FirstName,
-                    LastName = register.LastName,
-                    Email = register.Email,
-                    Gender = register.Gender,
-                    ChurchId = register.Church
-                    
-                };
-
-                var is_created = await _userManager.CreateAsync(new_user, register.Password);
-
-                if(is_created.Succeeded)
-                {
-                    
-                    //generate token
-                    //var token = GenerateJwtToken(new_user);
-
-                    return Ok(new AuthResult() 
-                    {   Status = "Success", 
-                        Message = "User created successfully!",
-                        // Token = token
-                    });
-
-                }
-            
-                // Log the details of the failure
-                    _logger.LogError($"User registration failed: {string.Join(", ", is_created.Errors)}");
-
-                return BadRequest(new AuthResult()
-                {
-                    Errors = new List<string>()
-                    {
-                        "Server Error"
-                    },
-                    Status = "Failed"
-                });
-            }
-        }    
-        catch (Exception ex)
+        var userExist = await _userManager.FindByEmailAsync(register.Email);
+        if (userExist != null)
+        {
+            // User already exists, throw exception
+            throw new UserExistsException(userExist.UserName, userExist.Email)
             {
-                // Log unexpected exceptions
-                _logger.LogError($"An unexpected error occurred during user registration: {ex}");
-                return StatusCode(StatusCodes.Status500InternalServerError, "An unexpected error occurred.");
-            }
+                ExistingUsername = userExist.UserName,
+                ExistingUserEmail = userExist.Email
+            };
+        }
 
-        return BadRequest();
+        // Check if the password and confirm password match
+        if (register.Password != register.ConfirmPassword)
+        {
+            return BadRequest("Passwords must match");
+        }
+
+        // Create user
+        var newUser = new User
+        {
+            UserName = register.Username,
+            FirstName = register.FirstName,
+            LastName = register.LastName,
+            Email = register.Email,
+            Gender = register.Gender,
+            ChurchId = register.Church
+        };
+
+        var creationResult = await _userManager.CreateAsync(newUser, register.Password);
+
+        if (creationResult.Succeeded)
+        {
+            return Ok(new AuthResult
+            {
+                Status = "Success",
+                Message = "User created successfully!"
+            });
+        }
+
+        // Log the details of the failure
+        _logger.LogError($"User registration failed: {string.Join(", ", creationResult.Errors)}");
+
+        return BadRequest(new AuthResult
+        {
+            Errors = creationResult.Errors.Select(error => error.Description).ToList(),
+            Status = "Failed"
+        });
     }
 
-    [HttpPost("Login")]
+
+
+    //TODO: NEED TO SET UP REDIRECT TO SUCCESSFUL REGISTER PAGE.
+    [HttpPost]
+    [Route("Login")]
     public async Task<IActionResult> Login([FromBody]LoginModel login)
     {
-        try
+        if(ModelState.IsValid)
         {
-            if(ModelState.IsValid)
-            {
-                //check if user exist
-                var existing_user = await _userManager.FindByNameAsync(login.UserName);
-
-                // User not found, return a BadRequest response with an error message
-                if(existing_user == null)
+            var existing_user = await _userManager.FindByNameAsync(login.UserName);
+            if(existing_user == null)
                     return BadRequest(new AuthResult()
                         {
                             Status = "Failed",
@@ -123,47 +118,75 @@ public class AccountController(
                                 "User doesn't exist"
                             }
                         });
-                
-                // Check if the provided password is correct
-                var isCorrect = await _userManager.CheckPasswordAsync(existing_user, login.Password);
-
-                if(!isCorrect)
-                    // Incorrect password, return a BadRequest response with an error message
-                    return BadRequest(new AuthResult()
-                    {
-                        Status = "Failed",
-                        Result = false,
-                        Errors = new List<string>()
-                            {
-                                "Invalid Credentials"
-                            }
-                    });
-
-                
-                // Password is correct, update LastLoggedIn and generate a JWT token
-                existing_user.LastLoggedOn = DateTime.UtcNow;
-                await _userManager.UpdateAsync(existing_user);
-                
-                var jwtToken = GenerateJwtToken(existing_user);
-
-                // Return a successful response with the JWT token
-                return Ok(new AuthResult()
+            var result = await _userManager.CheckPasswordAsync(existing_user, login.Password);
+            if (result)
                 {
-                    Token = jwtToken,
-                    Result = true,
-                    Status = "Success",
-                    Message ="Login was Successful;"
-                });
-            }
+                    existing_user.LastLoggedOn = DateTime.UtcNow;
+                    await _userManager.UpdateAsync(existing_user);
+
+                    // Log the successful login with ChurchId
+                    _logger.LogInformation("User {UserName} successfully logged in with ChurchId {ChurchId}.", existing_user.UserName, existing_user.ChurchId);
+
+                    var jwtToken = GenerateJwtToken(existing_user);
+
+                    // Return a successful response with the JWT token
+                    return Ok(new AuthResult()
+                    {
+                        Token = jwtToken,
+                        Result = true,
+                        Status = "Success",
+                        Message ="Login was Successful;"
+                    });
+                    
+                }
         }
-        catch(Exception ex)
+        else
         {
-            // Log unexpected exceptions
-            _logger.LogError($"An unexpected error occurred during user login: {ex}");
-            return StatusCode(StatusCodes.Status500InternalServerError, "An unexpected error occurred.");
+            ModelState.AddModelError(string.Empty, "Invalid login attempt.");
+            return BadRequest(new AuthResult()
+            {
+                Status = "Failed",
+                            Result = false,
+                            Message = "Login was unsuccessful",
+                            Errors = new List<string>()
+                            {
+                                "Invalid Login Attempt"
+                            }
+            });
         }
         return BadRequest();
     }
+
+    [HttpPost]
+    [Route("Logout")]
+    [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+    public async Task<IActionResult> Logout()
+    {
+        try
+        {
+            _logger.LogInformation("Before calling SignOutAsync");
+
+            if (_signInManager != null)
+            {
+                await _signInManager.SignOutAsync();
+                _logger.LogInformation("SignOutAsync called successfully");
+                // ... rest of the code
+                return Ok();
+            }
+            else
+            {
+                _logger.LogError("_signInManager is null");
+                // Log or handle the case where _signInManager is null
+                return StatusCode(500, "Internal Server Error");
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error during logout");
+            return StatusCode(500, "Internal Server Error");
+        }
+    }
+
 
     [HttpPost]
     [Route("Forgot-Password")]
@@ -188,9 +211,17 @@ public class AccountController(
                 new Claim(ClaimTypes.NameIdentifier, user.Id),
                 new Claim(ClaimTypes.Name, user.UserName),
                 new Claim(ClaimTypes.Email, user.Email),
+                new Claim("ChurchId", user.ChurchId.ToString()),
+                // new Claim("GroupId", user.GroupId?.ToString() ?? string.Empty),
+
                 // Add other claims as needed
             };
-            
+               // Add GroupId claim if it's not null
+            if (user.GroupId.HasValue)
+            {
+                claims.Add(new Claim("GroupId", user.GroupId.Value.ToString()));
+            }
+            _logger.LogInformation("Claims before token creation: {Claims}", claims);
             // Get user roles claims
             var roleClaims = GetUserRolesClaims(user);
 
@@ -215,7 +246,7 @@ public class AccountController(
 
             var token = JwtTokenHandler.CreateToken(tokenDescriptor);
             var jwtToken = JwtTokenHandler.WriteToken(token);
-            return jwtToken;
+            return jwtToken.ToString();
         }
         catch (Exception ex)
         {

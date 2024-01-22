@@ -249,37 +249,37 @@ namespace TheGospelMission.Migrations
                         new
                         {
                             GroupId = 1,
-                            CreatedAt = new DateTime(2023, 12, 18, 0, 44, 15, 300, DateTimeKind.Local).AddTicks(6960),
+                            CreatedAt = new DateTime(2023, 12, 19, 15, 43, 43, 397, DateTimeKind.Local).AddTicks(3530),
                             GroupName = "Adult Brothers"
                         },
                         new
                         {
                             GroupId = 2,
-                            CreatedAt = new DateTime(2023, 12, 18, 0, 44, 15, 300, DateTimeKind.Local).AddTicks(7010),
+                            CreatedAt = new DateTime(2023, 12, 19, 15, 43, 43, 397, DateTimeKind.Local).AddTicks(3600),
                             GroupName = "Adult Sisters"
                         },
                         new
                         {
                             GroupId = 3,
-                            CreatedAt = new DateTime(2023, 12, 18, 0, 44, 15, 300, DateTimeKind.Local).AddTicks(7020),
+                            CreatedAt = new DateTime(2023, 12, 19, 15, 43, 43, 397, DateTimeKind.Local).AddTicks(3600),
                             GroupName = "Adult Spanish Brothers"
                         },
                         new
                         {
                             GroupId = 4,
-                            CreatedAt = new DateTime(2023, 12, 18, 0, 44, 15, 300, DateTimeKind.Local).AddTicks(7020),
+                            CreatedAt = new DateTime(2023, 12, 19, 15, 43, 43, 397, DateTimeKind.Local).AddTicks(3600),
                             GroupName = "Adult Spanish Sisters"
                         },
                         new
                         {
                             GroupId = 5,
-                            CreatedAt = new DateTime(2023, 12, 18, 0, 44, 15, 300, DateTimeKind.Local).AddTicks(7020),
+                            CreatedAt = new DateTime(2023, 12, 19, 15, 43, 43, 397, DateTimeKind.Local).AddTicks(3610),
                             GroupName = "Student Brothers"
                         },
                         new
                         {
                             GroupId = 6,
-                            CreatedAt = new DateTime(2023, 12, 18, 0, 44, 15, 300, DateTimeKind.Local).AddTicks(7020),
+                            CreatedAt = new DateTime(2023, 12, 19, 15, 43, 43, 397, DateTimeKind.Local).AddTicks(3610),
                             GroupName = "Student Sisters"
                         });
                 });
