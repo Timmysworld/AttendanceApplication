@@ -19,6 +19,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers()
     .AddJsonOptions(options => 
     {
+        options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
         options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve;
     });
 builder.Services.AddScoped<GroupServices>(); // Use the appropriate scope (e.g., Scoped, Transient, or Singleton) as per your application's requirements
@@ -27,6 +28,7 @@ builder.Services.AddScoped<UserServices>();
 builder.Services.AddScoped<NotificationService>();
 builder.Services.AddScoped<ChurchServices>();
 builder.Services.AddScoped<AttendanceServices>();
+
 
 
 
@@ -90,9 +92,9 @@ builder.Services.AddIdentity<User, IdentityRole>(options => options.SignIn.Requi
     .AddDefaultTokenProviders()
     .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<GospelMissionDbContext>()
+    .AddSignInManager<SignInManager<User>>()
     .AddClaimsPrincipalFactory<UserClaimsPrincipalFactory<User, IdentityRole>>();
 
-    
 builder.Services.Configure<IdentityOptions>(options =>
 {
     // Default User settings.
@@ -102,6 +104,15 @@ builder.Services.Configure<IdentityOptions>(options =>
 
 });
 
+builder.Services.AddCors(options =>
+    {
+        options.AddDefaultPolicy(builder =>
+        {
+            builder.WithOrigins("http://localhost:5173")
+                   .AllowAnyMethod()
+                   .AllowAnyHeader();
+        });
+    });
 
 var app = builder.Build();
 
@@ -132,23 +143,34 @@ app.Use(async (context, next) =>
     }
 });
 
+// Middleware for serving index.html for client-side routing
+app.Use(async (context, next) =>
+{
+    await next();
+
+    // If no response is handled and the request is not for a file extension,
+    // assume it's a client-side route and serve the index.html.
+    if (context.Response.StatusCode == 404 && !Path.HasExtension(context.Request.Path.Value))
+    {
+        context.Request.Path = "/index.html";
+        await next();
+    }
+});
+
+
 
 
 // Authentication and Authorization
 app.UseRouting();
+app.UseCors();
 app.UseAuthentication();
 app.UseAuthorization();
 app.UseEndpoints(endpoints => { _ = endpoints.MapControllers(); }); // Empty UseEndpoints
-
+app.UseDefaultFiles(); // Serve index.html
+app.UseStaticFiles(); // Serve other static files
 // Map Controllers
 app.MapControllers();
 
-// Default Route
-app.MapGet("/", () =>
-{
-    // Return your landing page content or redirect to a dedicated landing page controller action
-    return "Hello World!";
-});
 
 using (var scope = app.Services.CreateScope())
 {
@@ -173,7 +195,7 @@ using (var scope = app.Services.CreateScope())
     string username = "TimmyTurner";
     string firstName = "Timothy";
     string lastName = "Singleton";
-    string email = "superadmin@admin.com";
+    string email = "overseer@cog.com";
     string gender = "male";
     string password = "Password1!";
     int churchId = 1;

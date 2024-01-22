@@ -1,0 +1,93 @@
+
+
+.heading{
+    font-family: "Oswald";
+    font-size: 1.5rem;
+    color: black;
+    text-align: center;
+    margin-bottom: 20px;
+
+}
+.signIn{
+    color: black;
+    font-size: 1rem!important;
+    margin-top:-25px
+}
+a{
+    text-decoration: none;
+}
+
+.card{
+    width: 90%;
+    max-width: 40rem;
+    margin: 3rem auto;
+    padding: 2rem;
+    background: linear-gradient(180deg, #253c3c, #1d4949);
+    border-radius: 8px;
+    box-shadow: 0 0 16px 1px rgba(0, 0, 0, 0.5);
+}
+
+.form {
+    max-width: 500px;
+    margin: 0 auto;
+    background-color: white;
+    padding: 20px;
+}
+
+.form label {
+    display: block;
+    font-size: 16px;
+    margin-bottom: 8px;
+    color: black;
+    font-family: Merriweather;
+    margin-top:10px;
+}
+
+
+.formGroup {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+select,input {
+    width: 100%;
+    padding: 8px;
+    font-size: 16px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+}
+
+
+
+
+/* Media query for screens 425px and smaller */
+@media (max-width: 425px) {
+    .heading {
+        font-size: 1.8rem;
+    }
+
+    .signIn {
+        font-size: 1rem!important;
+    }
+
+    .card {
+        width: 95%;
+        padding: 1rem;
+    }
+
+    .form label {
+        font-size: 14px;
+    }
+
+    .formGroup {
+        flex-direction: column;
+        gap: 8px;
+    }
+}
