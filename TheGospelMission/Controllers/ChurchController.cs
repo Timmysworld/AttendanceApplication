@@ -36,6 +36,28 @@ public class ChurchController : ControllerBase
         return Ok(churchNames);
     }
 
+    [HttpGet("/{churchId}")]
+    public IActionResult GetChurchById(int ChurchId)
+    {
+    
+            if (ChurchId <= 0)
+        {
+            ModelState.AddModelError("churchId", "The churchId must be a positive integer.");
+            return BadRequest(ModelState);
+        }
+
+        var church = _churchService.GetChurchByIdAsync(ChurchId);
+
+        if (church != null)
+        {
+            return Ok(church);
+        }
+        else
+        {
+            return NotFound(); // or return an appropriate status code for not found
+        }
+    }
+
     //READ/UPDATE MEMBER 
     ///<summary>
     /// Gets the LIST of ALL MEMBERS stored in DATABASE

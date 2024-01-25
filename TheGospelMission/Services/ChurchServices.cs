@@ -17,4 +17,8 @@ public class ChurchServices
     {
         return  _context.Churches.ToList();
     }
+    public Church GetChurchByIdAsync(int ChurchId)
+    {
+        return _context.Churches.SingleOrDefault(c => c.ChurchId == ChurchId);
+    }
 }

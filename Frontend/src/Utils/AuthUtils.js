@@ -38,7 +38,7 @@ try {
     const decodedToken = jwtDecode(token);
     return decodedToken;
 } catch (error) {
-    console.error('Error decoding token:', error);
+    console.error('Error decoding token:', error.message);
     return null;
 }
 };
@@ -52,9 +52,15 @@ if (token) {
 }
 return [];
 };
-// export const getUserRoles = () => {
-//     const { userRoles } = AuthContext._currentValue.auth;
-//     return userRoles;
-// };
-
+export const getChurchId = () => {
+    const token = retrieveToken();
+    if (token) {
+      const decodedToken = decodeToken(token);
+      const churchId = decodedToken ? decodedToken.ChurchId : null;
+      console.log("Retrieved ChurchId in AuthUtils:", churchId); // Add this line
+      return churchId;
+    }
+    return null;
+  };
+  
 

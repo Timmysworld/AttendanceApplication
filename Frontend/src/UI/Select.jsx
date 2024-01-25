@@ -11,8 +11,8 @@ const Select = ({ label, name, value, options, error, onChange,register, ...prop
             -- Select {label} --
           </option>
           {options &&
-            options.map((option) => (
-              <option key={option.value} value={option.value}>
+            options.map((option, index) => (
+              <option key={index} value={option.value}>
                 {option.label}
               </option>
             ))}
